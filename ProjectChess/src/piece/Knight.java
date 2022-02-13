@@ -1,6 +1,7 @@
 package piece;
 
-import Move.Move;
+import board.Tile;
+import move.Move;
 
 import java.util.List;
 
@@ -13,8 +14,12 @@ public class Knight extends Piece{
     }
 
     @Override
-    public List<Move> generateMove(){
-        int[][] moveCoefficient = {{2,1},{1,2}};
+    public List<Move> generateMove(Tile[][] board){
+        int[][] moveCoefficient = {{2,1},{1,2},{-2,1},{-1,2}};
+
+        for(int[] move:moveCoefficient){
+
+        }
 
         return null;
     }

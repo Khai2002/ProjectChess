@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 public class Board {
 
-    public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    //public static final String startFEN = "rnb1kbnr/pp5p/2pppqp1/5p2/4P3/5P2/PPPP2PP/RNBQKBNR";
+    //public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    public static final String startFEN = "8/8/8/3QK3/8/8/8/8";
 
     public HashMap<Integer, Character> piecePrint = new HashMap<>();
     public String fen;
@@ -55,10 +55,8 @@ public class Board {
             if(fenToBoard.containsKey(character)){
                 array1D[counter] = fenToBoard.get(character);
                 counter ++;
-                System.out.println(character);
             }else if(Character.isDigit(character)){
                 int temp = Character.getNumericValue(character);
-                System.out.println(temp);
                 for(int i = 0; i<temp; i++){
                     array1D[counter] = 0;
                     counter++;
@@ -68,7 +66,7 @@ public class Board {
 
         int[][] array2D = new int[8][8];
         for(int i = 0; i<array1D.length; i++){
-            array2D[i/8][i%8] = array1D[i];
+            array2D[i>>3][i%8] = array1D[i];
         }
 
         Tile[][] board = new Tile[8][8];
@@ -134,9 +132,9 @@ public class Board {
         for(int i = 0; i<8; i++){
             for(int j = 0; j<8; j++){
                 if(board[i][j] instanceof Tile.EmptyTile){
-                    System.out.print("_");
+                    System.out.print("_ ");
                 }else{
-                    System.out.print(piecePrint.get(board[i][j].pieceOnTile.id));
+                    System.out.print(piecePrint.get(board[i][j].pieceOnTile.id)+" ");
                 }
             }
             System.out.println();

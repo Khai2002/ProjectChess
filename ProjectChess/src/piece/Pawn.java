@@ -1,6 +1,7 @@
 package piece;
 
-import Move.Move;
+import board.Tile;
+import move.Move;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class Pawn extends Piece{
     }
 
     @Override
-    public List<Move> generateMove(){
+    public List<Move> generateMove(Tile[][] board){
         int[][] moveCoefficient = {};
         return null;
     }

@@ -1,6 +1,7 @@
 package piece;
 
-import Move.Move;
+import board.Tile;
+import move.Move;
 
 import java.util.List;
 
@@ -16,7 +17,30 @@ public class Piece {
         this.color = color;
     }
 
-    public List<Move> generateMove(){
+    public List<Move> generateMove(Tile[][] board){
         return null;
+    }
+
+    public int checkValidMove(int[] pieceCoordinate,int[] move,int coeff, Tile[][] board){
+
+        // Return 0 for not valid, 1 for valid and stop, 2 for valid and continue
+
+        int xCoordinate = pieceCoordinate[0] + coeff*move[0];
+        int yCoordinate = pieceCoordinate[1] + coeff*move[1];
+
+        if (xCoordinate>=8 || yCoordinate>=8 || xCoordinate<0 || yCoordinate<0){
+            // Out of bound, invalid move
+            return 0;
+        }else if(board[xCoordinate][yCoordinate] instanceof Tile.OccupiedTile){
+            if(board[xCoordinate][yCoordinate].pieceOnTile.color == this.color){
+                // Ally piece on tile, invalid move
+                return 0;
+            }else{
+                // Enemy piece on tile, valid move, but eat then stop
+                return 1;
+            }
+        }
+        // Empty valid tile, valid move and free to proceed (if ones are sliding pieces)
+        return 2;
     }
 }

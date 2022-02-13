@@ -4,10 +4,10 @@ import piece.*;
 
 public class Tile {
 
-    int[] tileCoordinate;
-    Piece pieceOnTile;
+    public int[] tileCoordinate;
+    public Piece pieceOnTile;
 
-    Tile(int[] tileCoordinate){
+    public Tile(int[] tileCoordinate){
         this.tileCoordinate = tileCoordinate;
     }
 
