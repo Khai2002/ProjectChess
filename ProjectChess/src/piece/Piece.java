@@ -1,5 +1,9 @@
 package piece;
 
+import Move.Move;
+
+import java.util.List;
+
 public class Piece {
 
     public int[] position; // init position of piece
@@ -10,5 +14,9 @@ public class Piece {
     Piece(int[] position, int color){
         this.position = position;
         this.color = color;
+    }
+
+    public List<Move> generateMove(){
+        return null;
     }
 }

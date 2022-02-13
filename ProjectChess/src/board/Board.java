@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 public class Board {
 
-    //public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    public static final String startFEN = "rnb1kbnr/pp5p/2pppqp1/5p2/4P3/5P2/PPPP2PP/RNBQKBNR";
+    public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    //public static final String startFEN = "rnb1kbnr/pp5p/2pppqp1/5p2/4P3/5P2/PPPP2PP/RNBQKBNR";
 
     public HashMap<Integer, Character> piecePrint = new HashMap<>();
     public String fen;
