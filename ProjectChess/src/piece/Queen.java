@@ -32,10 +32,10 @@ public class Queen extends Piece{
                 yCoordinate = this.position[1] + coeff*move[1];
 
                 if(temp == 2){
-                    listMove.add(new Move(this,board[xCoordinate][yCoordinate]));
+                    listMove.add(new Move(this,board[this.position[0]][this.position[1]],board[xCoordinate][yCoordinate]));
                     coeff ++;
                 }else if(temp == 1){
-                    listMove.add(new Move(this,board[xCoordinate][yCoordinate]));
+                    listMove.add(new Move(this,board[this.position[0]][this.position[1]],board[xCoordinate][yCoordinate]));
                     coeff ++;
                     break;
                 }else{

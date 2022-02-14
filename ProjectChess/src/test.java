@@ -16,7 +16,7 @@ public class test {
 
 
 
-        List<Move> listMove = board.board[3][4].pieceOnTile.generateMove(board.board);
+        List<Move> listMove = board.board[3][6].pieceOnTile.generateMove(board.board);
 
         System.out.println(listMove.size());
 

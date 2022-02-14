@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class Board {
 
     //public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    public static final String startFEN = "8/8/8/3QK3/8/8/8/8";
+    public static final String startFEN = "8/8/8/6n1/8/8/8/8";
 
     public HashMap<Integer, Character> piecePrint = new HashMap<>();
     public String fen;
@@ -76,7 +76,6 @@ public class Board {
                 int[] coord = {i,j};
                 Piece pieceOnTile = null;
                 if(Math.abs(tempo)==0){
-
                 }else if(Math.abs(tempo)==1){
                     if(tempo>0){
                         pieceOnTile = new Pawn(coord, 1);
@@ -128,7 +127,6 @@ public class Board {
     }
 
     public void printBoard(){
-        String string_board = "";
         for(int i = 0; i<8; i++){
             for(int j = 0; j<8; j++){
                 if(board[i][j] instanceof Tile.EmptyTile){
