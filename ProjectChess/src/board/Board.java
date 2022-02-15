@@ -27,6 +27,7 @@ public class Board {
         piecePrint.put(-5,'q');
         piecePrint.put(-6,'k');
 
+        
         this.fen = fen;
         this.board = fenToBoard(this.fen);
 
