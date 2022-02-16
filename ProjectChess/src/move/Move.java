@@ -19,25 +19,9 @@ public class Move {
     }
     
     public String columnNotation(Tile tile){
-        String column;
-        if (tile[0]==0){
-            column = "a";
-        } else if (tile[0]==1){
-            column = "b";
-        } else if (tile[0]==2){
-            column = "c";
-        } else if (tile[0]==3){
-            column = "d";
-        } else if (tile[0]==4){
-            column = "e";
-        } else if (tile[0]==5){
-            column = "f";
-        } else if (tile[0]==6){
-            column = "g";
-        } else if (tile[0]==7){
-            column = "h";
-        }
-        return column;
+        String[] column = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        int i = tile[0];
+        return column[i];
     }
             
     public String createNotation(){
