@@ -43,7 +43,7 @@ public class Move {
         // in ra cot diem ket thuc
         note += destinationTile.columnNotation();
         // in ra hang diem ket thuc
-        note += destinationTile[1];
+        note += destinationTile[1] + 1;
 
         
             
