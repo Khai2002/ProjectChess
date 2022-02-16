@@ -25,29 +25,29 @@ public class Move {
     }
             
     public String createNotation(){
-        String notation;
+        String note;
         String[] pieceNotation = {"R", "N", "B", "Q", "K"};
             // anh viet code trong nay nhe, dung 3 variable ma em cho them vao ay
         // Co vi tri bat dau, vi tri ket thuc va quan co
         // Ki hieu quan co
         
         int i = Math.abs(this.id);
-        notation += pieceNotation[i-2];
+        note += pieceNotation[i-2];
         
         // neu bi an thi them dau x
         if (this.checkValidMove( )==1){
             // in ra cot diem bat dau
-            notation += startingTile.columnNotation();
-            notation += "x";
+            note += startingTile.columnNotation();
+            note += "x";
         }
         // in ra cot diem ket thuc
-        notation += destinationTile.columnNotation();
+        note += destinationTile.columnNotation();
         // in ra hang diem ket thuc
-        notation += destinationTile[1];
+        note += destinationTile[1];
 
         
             
-        return notation;
+        return note;
     }
 
 }
