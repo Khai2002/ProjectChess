@@ -54,14 +54,14 @@ public class Move {
         } else if (Math.abs(this.id)==3){
             notation += "N";
         } else if (Math.abs(this.id)==4){
-            notation +=  "B";
+            notation += "B";
         } else if (Math.abs(this.id)==5){
-            notation +=  "Q";
+            notation += "Q";
         } else if (Math.abs(this.id)==6){
             notation += "K";
         }
         // neu bi an thi them dau x
-        if (this.temp==1){
+        if (this.checkValidMove( )==1){
             // in ra cot diem bat dau
             notation += startingTile.columnNotation();
             notation += "x";
