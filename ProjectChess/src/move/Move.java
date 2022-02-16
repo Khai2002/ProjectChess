@@ -25,25 +25,15 @@ public class Move {
     }
             
     public String createNotation(){
-        
-        String[] column = new String[8];
-        
-        
-        // anh viet code trong nay nhe, dung 3 variable ma em cho them vao ay
+        String notation;
+        String[] pieceNotation = {"R", "N", "B", "Q", "K"};
+            // anh viet code trong nay nhe, dung 3 variable ma em cho them vao ay
         // Co vi tri bat dau, vi tri ket thuc va quan co
         // Ki hieu quan co
-        if (Math.abs(this.id)==1){ 
-        } else if (Math.abs(this.id)==2){
-            notation += "R";  
-        } else if (Math.abs(this.id)==3){
-            notation += "N";
-        } else if (Math.abs(this.id)==4){
-            notation += "B";
-        } else if (Math.abs(this.id)==5){
-            notation += "Q";
-        } else if (Math.abs(this.id)==6){
-            notation += "K";
-        }
+        
+        int i = Math.abs(this.id);
+        notation += pieceNotation[i-2];
+        
         // neu bi an thi them dau x
         if (this.checkValidMove( )==1){
             // in ra cot diem bat dau
