@@ -1,5 +1,4 @@
 package move;
-import board.Board;
 import board.Tile;
 import piece.*;
 
@@ -18,32 +17,29 @@ public class Move {
         this.notation = this.createNotation();
     }
     
-    public String columnNotation(Tile tile){
+    public String columnNotation(Tile tile){ 
         String[] column = {"a", "b", "c", "d", "e", "f", "g", "h"};
-        int i = tile[0];
+        int i = tile.tileCoordinate[0];
         return column[i];
     }
             
     public String createNotation(){
         String note;
         String[] pieceNotation = {"R", "N", "B", "Q", "K"};
-            // anh viet code trong nay nhe, dung 3 variable ma em cho them vao ay
-        // Co vi tri bat dau, vi tri ket thuc va quan co
-        // Ki hieu quan co
-        
-        int i = Math.abs(this.id);
-        note += pieceNotation[i-2];
+       
+        int i = Math.abs(this.piece.id);
+        note = pieceNotation[i-2];
         
         // neu bi an thi them dau x
-        if (this.checkValidMove( )==1){
+        //if (this.piece.checkValidMove()==1){
             // in ra cot diem bat dau
-            note += startingTile.columnNotation();
+            note += columnNotation(startingTile);
             note += "x";
-        }
+        //}
         // in ra cot diem ket thuc
-        note += destinationTile.columnNotation();
+        note += columnNotation(destinationTile);
         // in ra hang diem ket thuc
-        note += destinationTile[1] + 1;
+        note += destinationTile.tileCoordinate[1] + 1;
 
         
             
