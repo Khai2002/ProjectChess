@@ -1,34 +1,21 @@
 package board;
 
-
 import piece.*;
 
 import java.util.HashMap;
 
 public class Board {
 
-    //public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    public static final String startFEN = "8/8/8/6n1/8/8/8/8";
+    public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    //public static final String startFEN = "8/8/8/5rRK/8/8/8/8";
 
-    public HashMap<Integer, Character> piecePrint = new HashMap<>();
+    public Character[] piecePrint = {'k','q','b','n','r','p','_','P','R','N','B','Q','K'};
+
     public String fen;
     public Tile[][] board;
 
     public Board(String fen){
-        piecePrint.put(1,'P');
-        piecePrint.put(2,'R');
-        piecePrint.put(3,'N');
-        piecePrint.put(4,'B');
-        piecePrint.put(5,'Q');
-        piecePrint.put(6,'K');
-        piecePrint.put(-1,'p');
-        piecePrint.put(-2,'r');
-        piecePrint.put(-3,'n');
-        piecePrint.put(-4,'b');
-        piecePrint.put(-5,'q');
-        piecePrint.put(-6,'k');
 
-        
         this.fen = fen;
         this.board = fenToBoard(this.fen);
 
@@ -130,11 +117,11 @@ public class Board {
 
     public void printBoard(){
         for(int i = 0; i<8; i++){
-            for(int j = 0; j<8; j++){
+            for(int j = 0; j<8; j++) {
                 if(board[i][j] instanceof Tile.EmptyTile){
-                    System.out.print("_ ");
+                    System.out.print(piecePrint[6]+" ");
                 }else{
-                    System.out.print(piecePrint.get(board[i][j].pieceOnTile.id)+" ");
+                    System.out.print(piecePrint[board[i][j].pieceOnTile.id + 6]+ " ");
                 }
             }
             System.out.println();
