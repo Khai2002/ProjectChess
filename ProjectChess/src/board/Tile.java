@@ -1,6 +1,5 @@
 package board;
 
-
 import piece.*;
 
 public class Tile {
