@@ -1,8 +1,10 @@
 package piece;
 
+import board.Board;
 import board.Tile;
 import move.Move;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class Piece {
@@ -11,15 +13,17 @@ public class Piece {
     public int value; // relative value of piece (based on type)
     public int color; // -1 for black, 1 for white
     public int id;
+    public boolean moved; // indicate whether a piece has moved (apply to Pawn, King and Rook)
+    public String name;
+    public List<Move> listMove = new LinkedList<>();
+
 
     Piece(int[] position, int color){
         this.position = position;
         this.color = color;
     }
 
-    public List<Move> generateMove(Tile[][] board){
-        return null;
-    }
+    public void generateMove(Tile[][] board){}
 
     public int checkValidMove(int[] pieceCoordinate,int[] move,int coeff, Tile[][] board){
 
@@ -42,5 +46,10 @@ public class Piece {
         }
         // Empty valid tile, valid move and free to proceed (if ones are sliding pieces)
         return 2;
+    }
+
+    @Override
+    public String toString(){
+        return this.name + ": "+ Board.COLUMN_NOTATION[position[1]] + (this.position[0]+1);
     }
 }

@@ -8,15 +8,16 @@ import java.util.List;
 
 public class Bishop extends Piece{
 
+
     public Bishop(int[] position, int color){
         super(position, color);
         this.value = 3;
         this.id = 4 * this.color;
+        this.name = "Bishop";
     }
 
     @Override
-    public List<Move> generateMove(Tile[][] board){
-        List<Move> listMove = new LinkedList<>();
+    public void generateMove(Tile[][] board){
         int[][] moveCoefficient = {{1,1},{-1,-1},{-1,1},{1,-1}};
         int coeff;
         int temp;
@@ -43,7 +44,8 @@ public class Bishop extends Piece{
             }
 
         }
-        return listMove;
     }
+
+
 
 }

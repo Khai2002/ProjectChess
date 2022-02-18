@@ -3,11 +3,15 @@ package board;
 import piece.*;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Board {
 
-    public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    //public static final String startFEN = "8/8/8/5rRK/8/8/8/8";
+    public static final Character[] COLUMN_NOTATION = {'A','B','C','D','E','F','G','H'};
+
+    //public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    public static final String startFEN = "8/8/8/6RK/6P1/8/8/8";
 
     public Character[] piecePrint = {'k','q','b','n','r','p','_','P','R','N','B','Q','K'};
 
@@ -19,10 +23,24 @@ public class Board {
         this.fen = fen;
         this.board = fenToBoard(this.fen);
 
-
     }
 
+    // Collect a list of all piece belonging to a color
+    public List<Piece> getPiece(int color){
+        List<Piece> list_piece = new LinkedList<>();
+        for(int i = 0; i<8; i++){
+            for(int j = 0; j<8;j++){
+                if(this.board[i][j] instanceof Tile.OccupiedTile && this.board[i][j].pieceOnTile.color == color){
+                    list_piece.add(this.board[i][j].pieceOnTile);
+                }
+            }
+        }
+        return list_piece;
+    }
+
+    // Transform FEN code to chess board
     public Tile[][] fenToBoard(String fen){
+
         int[] array1D = new int[64];
         char[] array = fen.toCharArray();
         int counter = 0;
@@ -115,6 +133,7 @@ public class Board {
         return board;
     }
 
+    // Print out chess board
     public void printBoard(){
         for(int i = 0; i<8; i++){
             for(int j = 0; j<8; j++) {

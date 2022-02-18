@@ -1,5 +1,6 @@
 import board.Board;
 import board.Tile;
+import game.Player;
 import move.Move;
 import piece.*;
 
@@ -14,11 +15,19 @@ public class test {
         Board board = new Board(Board.startFEN);
         board.printBoard();
 
+        Player white = new Player(board, 1);
+        List<Piece> list_piece = white.pieceInventory;
+        System.out.println(list_piece);
+
+        List<Move> list_move = white.possibleMove;
+        System.out.println(list_move);
+
+        //List<Move> listMove = board.board[3][6].pieceOnTile.generateMove(board.board);
+        //System.out.println(listMove.size());
+        //List<Piece> list_piece = board.getPiece(-1);
 
 
-        List<Move> listMove = board.board[3][6].pieceOnTile.generateMove(board.board);
 
-        System.out.println(listMove.size());
 
 
         long apresTraitement = System.currentTimeMillis();

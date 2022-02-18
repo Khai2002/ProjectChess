@@ -12,12 +12,12 @@ public class Queen extends Piece{
         super(position, color);
         this.value = 9;
         this.id = 5 * this.color;
+        this.name = "Queen";
     }
 
 
     @Override
-    public List<Move> generateMove(Tile[][] board){
-        List<Move> listMove = new LinkedList<>();
+    public void generateMove(Tile[][] board){
         int[][] moveCoefficient = {{0,1},{1,0},{0,-1},{-1,0},{1,1},{-1,-1},{-1,1},{1,-1}};
         int coeff;
         int temp;
@@ -44,6 +44,7 @@ public class Queen extends Piece{
             }
 
         }
-        return listMove;
     }
+
+
 }

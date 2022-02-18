@@ -32,4 +32,8 @@ public class Move {
         return null;
     }
 
+    public String toString(){
+        return this.piece.name;
+    }
+
 }

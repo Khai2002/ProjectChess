@@ -12,23 +12,22 @@ public class King extends Piece{
         super(position, color);
         this.value = 999;
         this.id = 6 * this.color;
+        this.name = "King";
+        this.moved = false;
     }
 
     @Override
-    public List<Move> generateMove(Tile[][] board){
-        List<Move> listMove = new LinkedList<>();
+    public void generateMove(Tile[][] board){
         int[][] moveCoefficient = {{0,1},{1,0},{0,-1},{-1,0},{1,1},{-1,-1},{-1,1},{1,-1}};
-        int coeff;
         int temp;
         int xCoordinate;
         int yCoordinate;
 
         for(int[] move: moveCoefficient){
-            coeff = 1;
-            while(checkValidMove(this.position, move,coeff, board) != 0){
-                temp = checkValidMove(this.position, move,coeff, board);
-                xCoordinate = this.position[0] + coeff*move[0];
-                yCoordinate = this.position[1] + coeff*move[1];
+            while(checkValidMove(this.position, move,1, board) != 0){
+                temp = checkValidMove(this.position, move,1, board);
+                xCoordinate = this.position[0] + move[0];
+                yCoordinate = this.position[1] + move[1];
 
                 if(temp != 0){
                     listMove.add(new Move(this,board[this.position[0]][this.position[1]],board[xCoordinate][yCoordinate]));
@@ -39,6 +38,8 @@ public class King extends Piece{
             }
 
         }
-        return listMove;
+
     }
+
+
 }
