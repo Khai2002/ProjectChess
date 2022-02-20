@@ -8,12 +8,15 @@ import java.util.List;
 
 public class Pawn extends Piece{
 
+    public boolean checkDoubleMove;
+
     public Pawn(int[] position, int color){
         super(position, color);
         this.value = 1;
         this.id = 1 * this.color;
         this.name = "Pawn";
         this.moved = false;
+        this.checkDoubleMove = false;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package board;
 
+import move.Move;
 import piece.*;
 
 import java.util.HashMap;
@@ -8,22 +9,54 @@ import java.util.List;
 
 public class Board {
 
+    // Global Attributes ===================================================== //
+
     public static final Character[] COLUMN_NOTATION = {'A','B','C','D','E','F','G','H'};
 
-    //public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    public static final String startFEN = "8/8/8/6RK/6P1/8/8/8";
+    public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    public static final String testFEN = "8/8/8/6RK/6P1/8/8/8";
+
+    // Local Attributes ====================================================== //
 
     public Character[] piecePrint = {'k','q','b','n','r','p','_','P','R','N','B','Q','K'};
 
+    // Variables that connect board to a previous state
+    public Board previousBoard;
+    public Move previousMove;
+
+    // Useful attributes to describe state of a chess board
     public String fen;
     public Tile[][] board;
 
+    // Constructors ========================================================== //
+
+    // Initialise Board using FEN code
     public Board(String fen){
 
         this.fen = fen;
         this.board = fenToBoard(this.fen);
 
     }
+
+    // Initialise Board using previous Board and a transition Move
+    public Board(Board previousBoard, Move move){
+        this.previousBoard = previousBoard;
+        this.previousMove = move;
+
+        // Anh Tung them cho em phuong trinh cho ra board moi dua vao trang thai Board cu va 1 Move.
+        // Thankss
+
+        // Bat dau tu previousBoard
+        // Dung temp de store quan co
+        // Xoa quan co khoi vi tri cu
+        // Copy no vao vi tri moi
+        // Doi attribute vi tri cua no
+        // Return ra this.board
+
+
+    }
+
+    // Methods ============================================================== //
 
     // Collect a list of all piece belonging to a color
     public List<Piece> getPiece(int color){
@@ -131,6 +164,11 @@ public class Board {
         }
 
         return board;
+    }
+
+    // Transform chess board to Fen
+    public String BoardToFEN(){
+        return null;
     }
 
     // Print out chess board

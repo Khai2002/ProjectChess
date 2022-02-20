@@ -9,6 +9,8 @@ import java.util.List;
 
 public class Piece {
 
+    // Local Attributes ====================================================== //
+
     public int[] position; // init position of piece
     public int value; // relative value of piece (based on type)
     public int color; // -1 for black, 1 for white
@@ -17,11 +19,14 @@ public class Piece {
     public String name;
     public List<Move> listMove = new LinkedList<>();
 
+    // Constructors ========================================================== //
 
     Piece(int[] position, int color){
         this.position = position;
         this.color = color;
     }
+
+    // Methods ============================================================== //
 
     public void generateMove(Tile[][] board){}
 
