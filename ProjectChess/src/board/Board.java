@@ -3,6 +3,7 @@ package board;
 import move.Move;
 import piece.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,8 +14,9 @@ public class Board {
 
     public static final Character[] COLUMN_NOTATION = {'A','B','C','D','E','F','G','H'};
 
-    public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-    public static final String testFEN = "8/8/8/6RK/6P1/8/8/8";
+    public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String testFEN = "8/8/8/6RK/6P1/8/8/8 w KQkq - 0 1";
+    public static final String failSaveFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     // Local Attributes ====================================================== //
 
@@ -24,17 +26,29 @@ public class Board {
     public Board previousBoard;
     public Move previousMove;
 
-    // Useful attributes to describe state of a chess board
+    // Useful attributes to describe current state of a chess board
     public String fen;
     public Tile[][] board;
+    public int colorActive; // Indicate which side is active
+    public boolean[] castleAvailable = new boolean[4];  // An array of 4 indicating possibility of castling
+    public int[] enPassantTileCoordinate = new int[2];  // Tile where en passant is available
+    public int halfMoveCounter; // Counter for number of move without pawn advancement or taking of piece (used for 50 moves rule)
+    public int fullMoveCounter; // Number for total move in the game
 
     // Constructors ========================================================== //
 
     // Initialise Board using FEN code
     public Board(String fen){
 
-        this.fen = fen;
-        this.board = fenToBoard(this.fen);
+        try{
+            this.fen = fen;
+            this.fenToBoard(this.fen);
+        }catch (Exception e){
+            System.out.println("FEN code not compatible");
+            this.fen = failSaveFEN;
+            this.fenToBoard(this.fen);
+        }
+
 
     }
 
@@ -72,10 +86,11 @@ public class Board {
     }
 
     // Transform FEN code to chess board
-    public Tile[][] fenToBoard(String fen){
+    public void fenToBoard(String fen){
 
         int[] array1D = new int[64];
-        char[] array = fen.toCharArray();
+        String[] fenPart = fen.split(" ");
+        char[] array = fenPart[0].toCharArray();
         int counter = 0;
         HashMap<Character, Integer> fenToBoard = new HashMap<>();
         fenToBoard.put('P',1);
@@ -109,14 +124,14 @@ public class Board {
             array2D[i>>3][i%8] = array1D[i];
         }
 
-        Tile[][] board = new Tile[8][8];
+        this.board = new Tile[8][8];
         for(int i = 0; i<array2D.length; i++){
             for(int j = 0; j<array2D[0].length; j++){
                 int tempo = array2D[i][j];
                 int[] coord = {i,j};
                 Piece pieceOnTile = null;
-                if(Math.abs(tempo)==0){
-                }else if(Math.abs(tempo)==1){
+
+                if(Math.abs(tempo)==1){
                     if(tempo>0){
                         pieceOnTile = new Pawn(coord, 1);
                     }else {
@@ -155,19 +170,54 @@ public class Board {
                 }
 
                 if(pieceOnTile == null){
-                    board[i][j] = new Tile.EmptyTile(coord);
+                    this.board[i][j] = new Tile.EmptyTile(coord);
                 }else{
-                    board[i][j] = new Tile.OccupiedTile(coord,pieceOnTile);
+                    this.board[i][j] = new Tile.OccupiedTile(coord,pieceOnTile);
                 }
 
             }
         }
 
-        return board;
+        // Treat string "w" or "b" for current active color
+        switch (fenPart[1]) {
+            case "w" -> this.colorActive = 1;
+            case "b" -> this.colorActive = -1;
+        }
+
+        // KQkq castling availability
+        if(!fenPart[2].equals("-")){
+            char[] castlingArray = fenPart[2].toCharArray();
+            for(char character:castlingArray){
+                switch (character){
+                    case 'K' -> this.castleAvailable[0] = true;
+                    case 'Q' -> this.castleAvailable[1] = true;
+                    case 'k' -> this.castleAvailable[2] = true;
+                    case 'q' -> this.castleAvailable[3] = true;
+                }
+            }
+        }
+
+        // En passant Square
+        if(!fenPart[3].equals("-")){
+            char[] enPassantArray = fenPart[3].toCharArray();
+            char firstElement = Character.toUpperCase(enPassantArray[0]);
+            for(char chara:COLUMN_NOTATION){
+                if(chara == firstElement){
+                    this.enPassantTileCoordinate[1] = Arrays.asList(COLUMN_NOTATION).indexOf(chara);
+                    break;
+                }
+            }
+            this.enPassantTileCoordinate[0] = 8 - Character.getNumericValue(enPassantArray[1]);
+        }
+
+        // Half Move & Full Move Counter
+        this.halfMoveCounter = Integer.parseInt(fenPart[4]);
+        this.fullMoveCounter = Integer.parseInt(fenPart[5]);
+
     }
 
     // Transform chess board to Fen
-    public String BoardToFEN(){
+    public String BoardToFen(){
         return null;
     }
 

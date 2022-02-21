@@ -13,8 +13,16 @@ public class test {
 
         long avantTraitement = System.currentTimeMillis();
 
-        Board board = new Board(Board.startFEN);
+        Board board = new Board(Board.testFEN);
         board.printBoard();
+
+        for(boolean bool:board.castleAvailable){
+            System.out.println(bool);
+        }
+
+        for(int in:board.enPassantTileCoordinate){
+            System.out.println(in);
+        }
 
 
         Player white = new Player(board, 1);

@@ -55,6 +55,6 @@ public class Piece {
 
     @Override
     public String toString(){
-        return this.name + ": "+ Board.COLUMN_NOTATION[position[1]] + (this.position[0]+1);
+        return this.name + ": "+ Board.COLUMN_NOTATION[position[1]] + (8 - this.position[0]);
     }
 }
