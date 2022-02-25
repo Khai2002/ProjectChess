@@ -47,6 +47,9 @@ public class Board {
     public boolean isWhiteInCheck;
     public boolean isBlackInCheck;
 
+    public boolean isWhiteInCheckMate;
+    public boolean isBlackInCheckMate;
+
     // Attribute used for search depth
     public int searchDepth;
 
@@ -206,6 +209,16 @@ public class Board {
         return false;
     }
 
+    // Verify if in CheckMate
+    public boolean isInCheckMate(int color){
+        return false;
+    }
+
+    // Verify if in stalemate
+    public boolean isInStalemate(int color){
+        return false;
+    }
+
     // Verify if a move can lead to king being checked
     public void limitMoveResultInCheck(int color){
 
@@ -348,8 +361,12 @@ public class Board {
 
         // Treat string "w" or "b" for current active color
         switch (fenPart[1]) {
-            case "w" -> this.colorActive = 1;
-            case "b" -> this.colorActive = -1;
+            case "w":
+                this.colorActive = 1;
+                break;
+            case "b":
+                this.colorActive = -1;
+                break;
         }
 
         // KQkq castling availability
@@ -357,10 +374,18 @@ public class Board {
             char[] castlingArray = fenPart[2].toCharArray();
             for(char character:castlingArray){
                 switch (character){
-                    case 'K' -> this.castleAvailable[0] = true;
-                    case 'Q' -> this.castleAvailable[1] = true;
-                    case 'k' -> this.castleAvailable[2] = true;
-                    case 'q' -> this.castleAvailable[3] = true;
+                    case 'K':
+                        this.castleAvailable[0] = true;
+                        break;
+                    case 'Q':
+                        this.castleAvailable[1] = true;
+                        break;
+                    case 'k':
+                        this.castleAvailable[2] = true;
+                        break;
+                    case 'q':
+                        this.castleAvailable[3] = true;
+                        break;
                 }
             }
         }
