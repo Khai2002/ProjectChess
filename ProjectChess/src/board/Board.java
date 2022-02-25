@@ -4,10 +4,7 @@ import move.Move;
 import piece.*;
 import game.Player;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Board {
 
@@ -17,7 +14,7 @@ public class Board {
     public static final Character[] PIECE_PRINT = {'k','q','b','n','r','p','_','P','R','N','B','Q','K'};
 
     public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    public static final String testFEN = "8/8/8/6rk/6P1/8/8/8 b KQkq - 0 1";
+    public static final String testFEN = "8/8/8/6rk/6P1/6P1/8/8 b KQkq - 0 1";
     public static final String test2FEN = "1r2kr2/pp1p1p2/2p4p/6pP/P1PP4/1P6/5PP1/R3K2R w KQ g6 0 21";
     public static final String failSaveFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -37,6 +34,22 @@ public class Board {
     public int halfMoveCounter; // Counter for number of move without pawn advancement or taking of piece (used for 50 moves rule)
     public int fullMoveCounter; // Number for total move in the game
 
+    // Attributes for White and Black
+    public List<Move> whiteMoves;
+    public List<Move> blackMoves;
+
+    public List<Piece> whitePieces;
+    public List<Piece> blackPieces;
+
+    public int[] whiteKingCoordinate;
+    public int[] blackKingCoordinate;
+
+    public boolean isWhiteInCheck;
+    public boolean isBlackInCheck;
+
+    // Attribute used for search depth
+    public int searchDepth;
+
 
     // Constructors ========================================================== //
 
@@ -44,19 +57,39 @@ public class Board {
     public Board(String fen){
 
         try{
+            this.searchDepth = 0;
             this.fen = fen;
             this.fenToBoard(this.fen);
         }catch (Exception e){
             System.out.println("FEN code not compatible");
+            this.searchDepth = 0;
             this.fen = failSaveFEN;
             this.fenToBoard(this.fen);
+        }finally {
+            this.whitePieces = this.getPiece(1);
+            this.blackPieces = this.getPiece(-1);
+
+            this.whiteMoves = this.getMove(this.whitePieces);
+            this.blackMoves = this.getMove(this.blackPieces);
+
+            this.whiteKingCoordinate = this.getKingPosition(1);
+            this.blackKingCoordinate = this.getKingPosition(-1);
+
+            this.isWhiteInCheck = this.isInCheck(1);
+            this.isBlackInCheck = this.isInCheck(-1);
+
+            if(searchDepth == 0){
+                limitMoveResultInCheck(this.colorActive);
+            }
         }
 
 
     }
 
     // Initialise Board using previous Board and a transition Move
-    public Board(Board previousBoard, Move move){
+    public Board(Board previousBoard, Move move, int searchDepth){
+        this.searchDepth = searchDepth;
+
         this.previousBoard = previousBoard;
         this.previousMove = move;
 
@@ -66,7 +99,14 @@ public class Board {
             this.fullMoveCounter ++;
         }
 
-        this.board = this.previousBoard.board;
+        //this.board = this.previousBoard.board;
+
+        this.board = new Tile[8][8];
+        for(int i = 0; i<8; i++){
+            for(int j = 0; j<8; j++){
+                this.board[i][j] = this.previousBoard.board[i][j];
+            }
+        }
 
         int[] startCoordinate = move.startingTile.tileCoordinate;
         int[] destinationCoordinate = move.destinationTile.tileCoordinate;
@@ -77,7 +117,21 @@ public class Board {
         this.board[startCoordinate[0]][startCoordinate[1]] = new Tile.EmptyTile(startCoordinate);
         this.board[destinationCoordinate[0]][destinationCoordinate[1]] = new Tile.OccupiedTile(destinationCoordinate,temp);
 
-        //this.verifyInCheck(this.colorActive);
+        this.whitePieces = this.getPiece(1);
+        this.blackPieces = this.getPiece(-1);
+
+        this.whiteKingCoordinate = this.getKingPosition(1);
+        this.blackKingCoordinate = this.getKingPosition(-1);
+
+        this.whiteMoves = this.getMove(this.whitePieces);
+        this.blackMoves = this.getMove(this.blackPieces);
+
+        this.isWhiteInCheck = this.isInCheck(1);
+        this.isBlackInCheck = this.isInCheck(-1);
+
+        if(searchDepth == 0){
+            limitMoveResultInCheck(this.colorActive);
+        }
 
 
     }
@@ -95,6 +149,108 @@ public class Board {
             }
         }
         return list_piece;
+    }
+
+    // Collect a list of all move by a color
+    public List<Move> getMove(List<Piece> listPiece){
+        List<Move> moveGenerated = new LinkedList<>();
+
+        for(Piece piece:listPiece){
+            piece.listMove = new ArrayList<>();
+            piece.generateMove(this.board);
+            if(piece.listMove!=null){
+                moveGenerated.addAll(piece.listMove);
+            }
+        }
+
+        return moveGenerated;
+    }
+
+    public int[] getKingPosition(int color){
+
+        int[] kingCoordinate = new int[2];
+
+        if(color==1){
+            for(Piece piece:whitePieces){
+                if(piece instanceof King){
+                    kingCoordinate = piece.position;
+                }
+            }
+        }else{
+            for(Piece piece:blackPieces){
+                if(piece instanceof King){
+                    kingCoordinate = piece.position;
+                }
+            }
+        }
+
+        return kingCoordinate;
+    }
+
+    // Verify if in check
+    public boolean isInCheck(int color){
+        if(color == 1){
+            for(Move move:blackMoves){
+                if(Arrays.equals(move.destinationTile.tileCoordinate,this.whiteKingCoordinate)){
+                    return true;
+                }
+            }
+        }else{
+            for(Move move:whiteMoves){
+                if(Arrays.equals(move.destinationTile.tileCoordinate,this.blackKingCoordinate)){
+                    //System.out.println("Hello from the other side");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // Verify if a move can lead to king being checked
+    public void limitMoveResultInCheck(int color){
+
+        List<Move> moveToDelete = new LinkedList<>();
+
+        if(color == 1){
+            for(Move move:whiteMoves){
+                if(!Arrays.equals(move.destinationTile.tileCoordinate,blackKingCoordinate)){
+                    Board newBoard = new Board(this,move,this.searchDepth+1);
+                    if(newBoard.isWhiteInCheck){
+                        //System.out.println("Hey");
+                        moveToDelete.add(move);
+                    }
+                }
+            }
+
+            //Delete Moves
+            if(moveToDelete != null){
+                for(Move move:moveToDelete){
+                    this.whiteMoves.remove(move);
+                }
+            }
+
+        }else{
+            for(Move move:blackMoves){
+                if(!Arrays.equals(move.destinationTile.tileCoordinate,whiteKingCoordinate)){
+                    Board newBoard = new Board(this,move,this.searchDepth+1);
+                    //System.out.println("Hello"+newBoard.blackKingCoordinate[0]+newBoard.blackKingCoordinate[1] + newBoard.isBlackInCheck);
+                    //System.out.println(newBoard.whitePieces);
+                    //System.out.println(newBoard.whiteMoves);
+                    //newBoard.printBoard();
+                    if(newBoard.isBlackInCheck){
+                        //System.out.println("Hey");
+                        moveToDelete.add(move);
+                    }
+                }
+            }
+
+            //Delete Moves
+            if(moveToDelete != null){
+                for(Move move:moveToDelete){
+                    this.blackMoves.remove(move);
+                }
+            }
+        }
     }
 
     // Transform FEN code to chess board
@@ -232,7 +388,7 @@ public class Board {
 
     // Transform chess board to Fen
     public String BoardToFen(){
-        String fenCode = new String();
+        StringBuilder fenCode = new StringBuilder(new String());
         int counter = 0;
         boolean checkLast = false;
 
@@ -243,54 +399,54 @@ public class Board {
                     counter ++;
                 }else{
                     if(counter!=0){
-                        fenCode += counter;
+                        fenCode.append(counter);
                         counter = 0;
                     }
-                    fenCode += PIECE_PRINT[this.board[i][j].pieceOnTile.id + 6];
+                    fenCode.append(PIECE_PRINT[this.board[i][j].pieceOnTile.id + 6]);
                 }
             }
 
             if(counter!=0){
-                fenCode += counter;
+                fenCode.append(counter);
                 counter = 0;
             }
 
             if(i!=7){
-                fenCode += "/";
+                fenCode.append("/");
             }
 
         }
 
         // Color Active
         if(this.colorActive == 1){
-            fenCode += " w ";
+            fenCode.append(" w ");
         }else{
-            fenCode += " b ";
+            fenCode.append(" b ");
         }
 
         // Castling Availability
         if(!(this.castleAvailable[0] || this.castleAvailable[1] || this.castleAvailable[2] || this.castleAvailable[3])){
-            fenCode += "-";
+            fenCode.append("-");
         }
-        if(this.castleAvailable[0]){ fenCode += "K"; }
-        if(this.castleAvailable[1]){ fenCode += "Q"; }
-        if(this.castleAvailable[2]){ fenCode += "k"; }
-        if(this.castleAvailable[3]){ fenCode += "q"; }
+        if(this.castleAvailable[0]){ fenCode.append("K"); }
+        if(this.castleAvailable[1]){ fenCode.append("Q"); }
+        if(this.castleAvailable[2]){ fenCode.append("k"); }
+        if(this.castleAvailable[3]){ fenCode.append("q"); }
 
 
         // En passant Square
         if(this.enPassantTileCoordinate == null){
-            fenCode += " -";
+            fenCode.append(" -");
         }else{
-            fenCode += " ";
-            fenCode += COLUMN_NOTATION[this.enPassantTileCoordinate[1]];
-            fenCode += 8 - this.enPassantTileCoordinate[0];
+            fenCode.append(" ");
+            fenCode.append(COLUMN_NOTATION[this.enPassantTileCoordinate[1]]);
+            fenCode.append(8 - this.enPassantTileCoordinate[0]);
         }
 
         // Half Move and Full Move
-        fenCode += (" " + this.halfMoveCounter + " "+ this.fullMoveCounter);
+        fenCode.append(" ").append(this.halfMoveCounter).append(" ").append(this.fullMoveCounter);
 
-        return fenCode;
+        return fenCode.toString();
     }
 
     // Print out chess board
