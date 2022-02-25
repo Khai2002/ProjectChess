@@ -13,8 +13,36 @@ public class test {
 
         long avantTraitement = System.currentTimeMillis();
 
+
         Board board = new Board(Board.testFEN);
         board.printBoard();
+
+        System.out.println(board.whiteMoves);
+        System.out.println(board.blackMoves);
+
+        System.out.println(board.isWhiteInCheck);
+        System.out.println(board.isBlackInCheck);
+
+
+
+        //Player white = new Player(board,1);
+        //System.out.println(white.possibleMove);
+
+
+
+        /*
+
+
+        String str = board.BoardToFen();
+        System.out.println(str);
+
+        //Move move = new Move(board.board[6][4].pieceOnTile,board.board[6][4], board.board[5][4]);
+
+        //Board newBoard = new Board(board,move);
+        //newBoard.printBoard();
+
+
+
 
         for(boolean bool:board.castleAvailable){
             System.out.println(bool);
@@ -33,6 +61,8 @@ public class test {
 
         List<Move> list_move = white.possibleMove;
         System.out.println(list_move);
+
+         */
 
 
 
