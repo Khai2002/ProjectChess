@@ -2,6 +2,7 @@ package board;
 
 import move.Move;
 import piece.*;
+import game.Player;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,15 +13,16 @@ public class Board {
 
     // Global Attributes ===================================================== //
 
-    public static final Character[] COLUMN_NOTATION = {'A','B','C','D','E','F','G','H'};
+    public static final Character[] COLUMN_NOTATION = {'a','b','c','d','e','f','g','h'};
+    public static final Character[] PIECE_PRINT = {'k','q','b','n','r','p','_','P','R','N','B','Q','K'};
 
     public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    public static final String testFEN = "8/8/8/6RK/6P1/8/8/8 w KQkq - 0 1";
+    public static final String testFEN = "8/8/8/6rk/6P1/8/8/8 b KQkq - 0 1";
+    public static final String test2FEN = "1r2kr2/pp1p1p2/2p4p/6pP/P1PP4/1P6/5PP1/R3K2R w KQ g6 0 21";
     public static final String failSaveFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     // Local Attributes ====================================================== //
 
-    public Character[] piecePrint = {'k','q','b','n','r','p','_','P','R','N','B','Q','K'};
 
     // Variables that connect board to a previous state
     public Board previousBoard;
@@ -31,9 +33,10 @@ public class Board {
     public Tile[][] board;
     public int colorActive; // Indicate which side is active
     public boolean[] castleAvailable = new boolean[4];  // An array of 4 indicating possibility of castling
-    public int[] enPassantTileCoordinate = new int[2];  // Tile where en passant is available
+    public int[] enPassantTileCoordinate;  // Tile where en passant is available
     public int halfMoveCounter; // Counter for number of move without pawn advancement or taking of piece (used for 50 moves rule)
     public int fullMoveCounter; // Number for total move in the game
+
 
     // Constructors ========================================================== //
 
@@ -57,15 +60,24 @@ public class Board {
         this.previousBoard = previousBoard;
         this.previousMove = move;
 
-        // Anh Tung them cho em phuong trinh cho ra board moi dua vao trang thai Board cu va 1 Move.
-        // Thankss
+        this.colorActive = this.previousBoard.colorActive * (-1);
 
-        // Bat dau tu previousBoard
-        // Dung temp de store quan co
-        // Xoa quan co khoi vi tri cu
-        // Copy no vao vi tri moi
-        // Doi attribute vi tri cua no
-        // Return ra this.board
+        if(this.previousBoard.colorActive == -1){
+            this.fullMoveCounter ++;
+        }
+
+        this.board = this.previousBoard.board;
+
+        int[] startCoordinate = move.startingTile.tileCoordinate;
+        int[] destinationCoordinate = move.destinationTile.tileCoordinate;
+
+        Piece temp = move.piece;
+        temp.updateStatus(move);
+
+        this.board[startCoordinate[0]][startCoordinate[1]] = new Tile.EmptyTile(startCoordinate);
+        this.board[destinationCoordinate[0]][destinationCoordinate[1]] = new Tile.OccupiedTile(destinationCoordinate,temp);
+
+        //this.verifyInCheck(this.colorActive);
 
 
     }
@@ -199,8 +211,10 @@ public class Board {
 
         // En passant Square
         if(!fenPart[3].equals("-")){
+            this.enPassantTileCoordinate = new int[2];
             char[] enPassantArray = fenPart[3].toCharArray();
-            char firstElement = Character.toUpperCase(enPassantArray[0]);
+            char firstElement = enPassantArray[0];
+
             for(char chara:COLUMN_NOTATION){
                 if(chara == firstElement){
                     this.enPassantTileCoordinate[1] = Arrays.asList(COLUMN_NOTATION).indexOf(chara);
@@ -218,7 +232,65 @@ public class Board {
 
     // Transform chess board to Fen
     public String BoardToFen(){
-        return null;
+        String fenCode = new String();
+        int counter = 0;
+        boolean checkLast = false;
+
+        // Piece position
+        for(int i = 0; i<8; i++){
+            for(int j = 0; j<8; j++){
+                if(this.board[i][j] instanceof Tile.EmptyTile){
+                    counter ++;
+                }else{
+                    if(counter!=0){
+                        fenCode += counter;
+                        counter = 0;
+                    }
+                    fenCode += PIECE_PRINT[this.board[i][j].pieceOnTile.id + 6];
+                }
+            }
+
+            if(counter!=0){
+                fenCode += counter;
+                counter = 0;
+            }
+
+            if(i!=7){
+                fenCode += "/";
+            }
+
+        }
+
+        // Color Active
+        if(this.colorActive == 1){
+            fenCode += " w ";
+        }else{
+            fenCode += " b ";
+        }
+
+        // Castling Availability
+        if(!(this.castleAvailable[0] || this.castleAvailable[1] || this.castleAvailable[2] || this.castleAvailable[3])){
+            fenCode += "-";
+        }
+        if(this.castleAvailable[0]){ fenCode += "K"; }
+        if(this.castleAvailable[1]){ fenCode += "Q"; }
+        if(this.castleAvailable[2]){ fenCode += "k"; }
+        if(this.castleAvailable[3]){ fenCode += "q"; }
+
+
+        // En passant Square
+        if(this.enPassantTileCoordinate == null){
+            fenCode += " -";
+        }else{
+            fenCode += " ";
+            fenCode += COLUMN_NOTATION[this.enPassantTileCoordinate[1]];
+            fenCode += 8 - this.enPassantTileCoordinate[0];
+        }
+
+        // Half Move and Full Move
+        fenCode += (" " + this.halfMoveCounter + " "+ this.fullMoveCounter);
+
+        return fenCode;
     }
 
     // Print out chess board
@@ -226,9 +298,9 @@ public class Board {
         for(int i = 0; i<8; i++){
             for(int j = 0; j<8; j++) {
                 if(board[i][j] instanceof Tile.EmptyTile){
-                    System.out.print(piecePrint[6]+" ");
+                    System.out.print(PIECE_PRINT[6]+" ");
                 }else{
-                    System.out.print(piecePrint[board[i][j].pieceOnTile.id + 6]+ " ");
+                    System.out.print(PIECE_PRINT[board[i][j].pieceOnTile.id + 6]+ " ");
                 }
             }
             System.out.println();
