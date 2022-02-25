@@ -5,10 +5,10 @@ import piece.*;
 
 public class Move {
 
-    String notation;
-    Piece piece;
-    Tile startingTile;
-    Tile destinationTile;
+    public String notation;
+    public Piece piece;
+    public Tile startingTile;
+    public Tile destinationTile;
 
     public Move(Piece piece, Tile startingTile , Tile destinationTile){
         this.piece = piece;
@@ -33,7 +33,7 @@ public class Move {
     }
 
     public String toString(){
-        return this.piece.name;
+        return this.piece.name + this.destinationTile.tileCoordinate[0] + this.destinationTile.tileCoordinate[1];
     }
 
 }

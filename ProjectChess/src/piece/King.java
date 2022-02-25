@@ -3,6 +3,8 @@ package piece;
 import board.Tile;
 import move.Move;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,6 +16,12 @@ public class King extends Piece{
         this.id = 6 * this.color;
         this.name = "King";
         this.moved = false;
+    }
+
+    @Override
+    public void updateStatus(Move move){
+        super.updateStatus(move);
+        this.moved = true;
     }
 
     @Override
@@ -38,6 +46,7 @@ public class King extends Piece{
             }
 
         }
+        this.listMove = new ArrayList<>(new HashSet<>(this.listMove));
 
     }
 

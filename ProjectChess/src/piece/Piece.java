@@ -53,6 +53,11 @@ public class Piece {
         return 2;
     }
 
+    // Update status for Piece
+    public void updateStatus(Move move){
+        this.position = move.destinationTile.tileCoordinate;
+    }
+
     @Override
     public String toString(){
         return this.name + ": "+ Board.COLUMN_NOTATION[position[1]] + (8 - this.position[0]);

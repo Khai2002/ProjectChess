@@ -17,6 +17,12 @@ public class Rook extends Piece{
     }
 
     @Override
+    public void updateStatus(Move move){
+        super.updateStatus(move);
+        this.moved = true;
+    }
+
+    @Override
     public void generateMove(Tile[][] board){
         int[][] moveCoefficient = {{0,1},{1,0},{0,-1},{-1,0}};
         int coeff;

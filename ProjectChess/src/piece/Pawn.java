@@ -3,6 +3,8 @@ package piece;
 import board.Tile;
 import move.Move;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,8 +17,30 @@ public class Pawn extends Piece{
         this.value = 1;
         this.id = 1 * this.color;
         this.name = "Pawn";
-        this.moved = false;
+        this.checkMoved();
         this.checkDoubleMove = false;
+    }
+
+    @Override
+    public void updateStatus(Move move){
+        super.updateStatus(move);
+        this.moved = true;
+    }
+
+    public void checkMoved(){
+        if(this.id>0){
+            if(this.position[0] == 6){
+                this.moved = false;
+            }else{
+                this.moved = true;
+            }
+        }else{
+            if(this.position[0] == 1){
+                this.moved = false;
+            }else{
+                this.moved = true;
+            }
+        }
     }
 
     @Override
@@ -48,6 +72,8 @@ public class Pawn extends Piece{
 
 
         // Check for en passant
+
+
 
 
     }
