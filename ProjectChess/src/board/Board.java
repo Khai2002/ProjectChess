@@ -17,6 +17,7 @@ public class Board {
     public static final String testFEN = "8/8/8/6rk/6P1/6P1/8/8 b KQkq - 0 1";
     public static final String test2FEN = "1r2kr2/pp1p1p2/2p4p/6pP/P1PP4/1P6/5PP1/R3K2R w KQ g6 0 21";
     public static final String failSaveFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String checkmateFEN = "7q/6r1/8/7K/8/8/8/8 w - - 0 1";
 
     // Local Attributes ====================================================== //
 
@@ -49,6 +50,9 @@ public class Board {
 
     public boolean isWhiteInCheckMate;
     public boolean isBlackInCheckMate;
+
+    public boolean isWhiteInStaleMate;
+    public boolean isBlackInStaleMate;
 
     // Attribute used for search depth
     public int searchDepth;
@@ -132,6 +136,12 @@ public class Board {
         this.isWhiteInCheck = this.isInCheck(1);
         this.isBlackInCheck = this.isInCheck(-1);
 
+        this.isWhiteInCheckMate = this.isInCheckMate(1);
+        this.isBlackInCheckMate = this.isInCheckMate(-1);
+
+        this.isWhiteInStaleMate = this.isInStaleMate(1);
+        this.isBlackInStaleMate = this.isInStaleMate(-1);
+
         if(searchDepth == 0){
             limitMoveResultInCheck(this.colorActive);
         }
@@ -193,15 +203,17 @@ public class Board {
     // Verify if in check
     public boolean isInCheck(int color){
         if(color == 1){
+            System.out.println("Heo");
             for(Move move:blackMoves){
                 if(Arrays.equals(move.destinationTile.tileCoordinate,this.whiteKingCoordinate)){
                     return true;
                 }
             }
         }else{
+            System.out.println("Hell");
             for(Move move:whiteMoves){
                 if(Arrays.equals(move.destinationTile.tileCoordinate,this.blackKingCoordinate)){
-                    //System.out.println("Hello from the other side");
+                    System.out.println("Hello from the other side");
                     return true;
                 }
             }
@@ -211,11 +223,43 @@ public class Board {
 
     // Verify if in CheckMate
     public boolean isInCheckMate(int color){
+        System.out.println("Hello");
+        
+        if (color == 1){
+            System.out.println("Hello1");
+            System.out.println(this.whiteMoves);
+            if (this.isWhiteInCheck == true){
+                System.out.println("Hello11");
+                if (this.whiteMoves == null){
+                    return true;
+                }  
+            }
+        }else{
+            System.out.println("Hello2");
+            if (this.isBlackInCheck == true){
+                if (this.blackMoves == null){
+                    return true;
+                }  
+            }
+        }
         return false;
     }
 
     // Verify if in stalemate
-    public boolean isInStalemate(int color){
+    public boolean isInStaleMate(int color){
+        if (color == 1){
+            if (this.isWhiteInCheck == false){
+                if (this.whiteMoves == null){
+                        return true;
+                }
+            }
+        }else{
+            if (this.isBlackInCheck == false){
+                if (this.blackMoves == null){
+                        return true;
+                }
+            } 
+        }
         return false;
     }
 
