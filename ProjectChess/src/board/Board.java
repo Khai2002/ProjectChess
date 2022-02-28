@@ -17,7 +17,7 @@ public class Board {
     public static final String testFEN = "8/8/8/6rk/6P1/6P1/8/8 b KQkq - 0 1";
     public static final String test2FEN = "1r2kr2/pp1p1p2/2p4p/6pP/P1PP4/1P6/5PP1/R3K2R w KQ g6 0 21";
     public static final String failSaveFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    public static final String checkmateFEN = "7q/6r1/8/7K/8/8/8/8 w - - 0 1";
+    public static final String checkmateFEN = "7Q/6R1/8/7k/8/8/8/8 b - - 0 1";
 
     // Local Attributes ====================================================== //
 
@@ -85,9 +85,15 @@ public class Board {
             this.isWhiteInCheck = this.isInCheck(1);
             this.isBlackInCheck = this.isInCheck(-1);
 
-            if(searchDepth == 0){
+            if(this.searchDepth == 0){
                 limitMoveResultInCheck(this.colorActive);
             }
+
+            this.isWhiteInCheckMate = this.isInCheckMate(1);
+            this.isBlackInCheckMate = this.isInCheckMate(-1);
+
+            this.isWhiteInStaleMate = this.isInStalemate(1);
+            this.isBlackInStaleMate = this.isInStalemate(-1);
         }
 
 
@@ -136,15 +142,16 @@ public class Board {
         this.isWhiteInCheck = this.isInCheck(1);
         this.isBlackInCheck = this.isInCheck(-1);
 
+        if(this.searchDepth == 0){
+            limitMoveResultInCheck(this.colorActive);
+        }
+
         this.isWhiteInCheckMate = this.isInCheckMate(1);
         this.isBlackInCheckMate = this.isInCheckMate(-1);
 
-        this.isWhiteInStaleMate = this.isInStaleMate(1);
-        this.isBlackInStaleMate = this.isInStaleMate(-1);
 
-        if(searchDepth == 0){
-            limitMoveResultInCheck(this.colorActive);
-        }
+        this.isWhiteInStaleMate = this.isInStalemate(1);
+        this.isBlackInStaleMate = this.isInStalemate(-1);
 
 
     }
@@ -203,17 +210,15 @@ public class Board {
     // Verify if in check
     public boolean isInCheck(int color){
         if(color == 1){
-            System.out.println("Heo");
             for(Move move:blackMoves){
                 if(Arrays.equals(move.destinationTile.tileCoordinate,this.whiteKingCoordinate)){
                     return true;
                 }
             }
         }else{
-            System.out.println("Hell");
             for(Move move:whiteMoves){
                 if(Arrays.equals(move.destinationTile.tileCoordinate,this.blackKingCoordinate)){
-                    System.out.println("Hello from the other side");
+                    //System.out.println("Hello from the other side");
                     return true;
                 }
             }
@@ -221,46 +226,8 @@ public class Board {
         return false;
     }
 
-    // Verify if in CheckMate
-    public boolean isInCheckMate(int color){
-        System.out.println("Hello");
-        
-        if (color == 1){
-            System.out.println("Hello1");
-            System.out.println(this.whiteMoves);
-            if (this.isWhiteInCheck == true){
-                System.out.println("Hello11");
-                if (this.whiteMoves == null){
-                    return true;
-                }  
-            }
-        }else{
-            System.out.println("Hello2");
-            if (this.isBlackInCheck == true){
-                if (this.blackMoves == null){
-                    return true;
-                }  
-            }
-        }
-        return false;
-    }
-
-    // Verify if in stalemate
-    public boolean isInStaleMate(int color){
-        if (color == 1){
-            if (this.isWhiteInCheck == false){
-                if (this.whiteMoves == null){
-                        return true;
-                }
-            }
-        }else{
-            if (this.isBlackInCheck == false){
-                if (this.blackMoves == null){
-                        return true;
-                }
-            } 
-        }
-        return false;
+    public void printTest(){
+        System.out.println(this.whiteMoves);
     }
 
     // Verify if a move can lead to king being checked
@@ -269,16 +236,17 @@ public class Board {
         List<Move> moveToDelete = new LinkedList<>();
 
         if(color == 1){
+            //System.out.println("Hello I'm white");
             for(Move move:whiteMoves){
                 if(!Arrays.equals(move.destinationTile.tileCoordinate,blackKingCoordinate)){
-                    Board newBoard = new Board(this,move,this.searchDepth+1);
+                    Board newBoard = new Board(this,move,1);
                     if(newBoard.isWhiteInCheck){
                         //System.out.println("Hey");
                         moveToDelete.add(move);
                     }
                 }
             }
-
+            System.out.println(moveToDelete);
             //Delete Moves
             if(moveToDelete != null){
                 for(Move move:moveToDelete){
@@ -287,20 +255,20 @@ public class Board {
             }
 
         }else{
+            //System.out.println("Hello I'm black");
             for(Move move:blackMoves){
                 if(!Arrays.equals(move.destinationTile.tileCoordinate,whiteKingCoordinate)){
-                    Board newBoard = new Board(this,move,this.searchDepth+1);
-                    //System.out.println("Hello"+newBoard.blackKingCoordinate[0]+newBoard.blackKingCoordinate[1] + newBoard.isBlackInCheck);
-                    //System.out.println(newBoard.whitePieces);
-                    //System.out.println(newBoard.whiteMoves);
+                    Board newBoard = new Board(this,move,1);
                     //newBoard.printBoard();
+                    //System.out.println(newBoard.whiteMoves);
+                    //System.out.println(newBoard.isBlackInCheck);
                     if(newBoard.isBlackInCheck){
-                        //System.out.println("Hey");
+                        //System.out.println("Hell yeah");
                         moveToDelete.add(move);
                     }
                 }
             }
-
+            System.out.println(moveToDelete);
             //Delete Moves
             if(moveToDelete != null){
                 for(Move move:moveToDelete){
@@ -308,6 +276,34 @@ public class Board {
                 }
             }
         }
+    }
+
+    // Verify if in CheckMate
+    public boolean isInCheckMate(int color){
+        if(color == 1){
+            if(this.isWhiteInCheck && this.whiteMoves.isEmpty()){
+                return true;
+            }
+        }else{
+            if(this.isBlackInCheck && this.blackMoves.isEmpty()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Verify if in stalemate
+    public boolean isInStalemate(int color){
+        if(color == 1){
+            if((!this.isWhiteInCheck) && this.whiteMoves.isEmpty()){
+                return true;
+            }
+        }else{
+            if((!this.isBlackInCheck) && this.blackMoves.isEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 
     // Transform FEN code to chess board
