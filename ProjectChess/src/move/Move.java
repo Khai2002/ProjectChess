@@ -3,7 +3,9 @@ package move;
 import board.Tile;
 import piece.*;
 
-public class Move {
+import java.io.Serializable;
+
+public class Move implements Serializable {
 
     public String notation;
     public Piece piece;
@@ -33,7 +35,7 @@ public class Move {
     }
 
     public String toString(){
-        return this.piece.name + this.destinationTile.tileCoordinate[0] + this.destinationTile.tileCoordinate[1];
+        return this.piece.name + this.startingTile.tileCoordinate[0] + this.startingTile.tileCoordinate[1]+ "-"+ this.destinationTile.tileCoordinate[0] + this.destinationTile.tileCoordinate[1];
     }
 
 }

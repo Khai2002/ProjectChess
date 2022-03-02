@@ -4,10 +4,11 @@ import board.Board;
 import board.Tile;
 import move.Move;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Piece {
+public class Piece implements Serializable {
 
     // Local Attributes ====================================================== //
 
@@ -21,7 +22,7 @@ public class Piece {
 
     // Constructors ========================================================== //
 
-    Piece(int[] position, int color){
+    public Piece(int[] position, int color){
         this.position = position;
         this.color = color;
     }
@@ -56,6 +57,11 @@ public class Piece {
     // Update status for Piece
     public void updateStatus(Move move){
         this.position = move.destinationTile.tileCoordinate;
+    }
+
+    // Spawn new Piece
+    public void spawnNewPiece(Move move){
+
     }
 
     @Override

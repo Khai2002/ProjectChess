@@ -4,9 +4,10 @@ import move.Move;
 import piece.*;
 import game.Player;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Board {
+public class Board implements Serializable {
 
     // Global Attributes ===================================================== //
 
@@ -18,6 +19,9 @@ public class Board {
     public static final String test2FEN = "1r2kr2/pp1p1p2/2p4p/6pP/P1PP4/1P6/5PP1/R3K2R w KQ g6 0 21";
     public static final String failSaveFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final String checkmateFEN = "7Q/6R1/8/7k/8/8/8/8 b - - 0 1";
+    public static final String stalemateFEN = "8/8/q7/4K3/7q/8/8/3q1q2 w - - 0 1";
+    public static final String weirdPositionFEN = "8/8/1R6/7K/8/8/1r6/1k4r1 b - - 0 1";
+    public static final String pawnDebugFEN = "8/6p1/8/8/8/8/1P6/8 w - - 0 1";
 
     // Local Attributes ====================================================== //
 
@@ -124,8 +128,50 @@ public class Board {
         int[] startCoordinate = move.startingTile.tileCoordinate;
         int[] destinationCoordinate = move.destinationTile.tileCoordinate;
 
-        Piece temp = move.piece;
-        temp.updateStatus(move);
+
+        Piece temp = null;
+        int currentId = move.piece.id;
+        
+        if(Math.abs(currentId)==1){
+            if(currentId>0){
+                temp = new Pawn(destinationCoordinate, 1);
+            }else {
+                temp = new Pawn(destinationCoordinate, -1);
+            }
+        }else if(Math.abs(currentId)==2){
+            if(currentId>0){
+                temp = new Rook(destinationCoordinate, 1);
+            }else {
+                temp = new Rook(destinationCoordinate, -1);
+            }
+        }else if(Math.abs(currentId)==3){
+            if(currentId>0){
+                temp = new Knight(destinationCoordinate, 1);
+            }else {
+                temp = new Knight(destinationCoordinate, -1);
+            }
+        }else if(Math.abs(currentId)==4){
+            if(currentId>0){
+                temp = new Bishop(destinationCoordinate, 1);
+            }else {
+                temp = new Bishop(destinationCoordinate, -1);
+            }
+        }else if(Math.abs(currentId)==5){
+            if(currentId>0){
+                temp = new Queen(destinationCoordinate, 1);
+            }else {
+                temp = new Queen(destinationCoordinate, -1);
+            }
+        }else if(Math.abs(currentId)==6){
+            if(currentId>0){
+                temp = new King(destinationCoordinate, 1);
+            }else {
+                temp = new King(destinationCoordinate, -1);
+            }
+        }
+        
+        //Piece temp = move.piece;
+        //temp.updateStatus(move);
 
         this.board[startCoordinate[0]][startCoordinate[1]] = new Tile.EmptyTile(startCoordinate);
         this.board[destinationCoordinate[0]][destinationCoordinate[1]] = new Tile.OccupiedTile(destinationCoordinate,temp);
@@ -226,10 +272,6 @@ public class Board {
         return false;
     }
 
-    public void printTest(){
-        System.out.println(this.whiteMoves);
-    }
-
     // Verify if a move can lead to king being checked
     public void limitMoveResultInCheck(int color){
 
@@ -246,7 +288,7 @@ public class Board {
                     }
                 }
             }
-            System.out.println(moveToDelete);
+            //System.out.println(moveToDelete);
             //Delete Moves
             if(moveToDelete != null){
                 for(Move move:moveToDelete){
@@ -268,7 +310,7 @@ public class Board {
                     }
                 }
             }
-            System.out.println(moveToDelete);
+            //System.out.println(moveToDelete);
             //Delete Moves
             if(moveToDelete != null){
                 for(Move move:moveToDelete){
@@ -517,6 +559,7 @@ public class Board {
     // Print out chess board
     public void printBoard(){
         for(int i = 0; i<8; i++){
+            System.out.print(i + " ");
             for(int j = 0; j<8; j++) {
                 if(board[i][j] instanceof Tile.EmptyTile){
                     System.out.print(PIECE_PRINT[6]+" ");
@@ -524,7 +567,9 @@ public class Board {
                     System.out.print(PIECE_PRINT[board[i][j].pieceOnTile.id + 6]+ " ");
                 }
             }
+
             System.out.println();
         }
+        System.out.println("  0 1 2 3 4 5 6 7");
     }
 }

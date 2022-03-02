@@ -2,7 +2,9 @@ package board;
 
 import piece.*;
 
-public class Tile {
+import java.io.Serializable;
+
+public class Tile implements Serializable {
 
     public int[] tileCoordinate;
     public Piece pieceOnTile;

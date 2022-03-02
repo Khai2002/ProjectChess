@@ -9,19 +9,37 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class test {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         long avantTraitement = System.currentTimeMillis();
 
 
-        Board board = new Board(Board.testFEN);
+        Board board = new Board(Board.startFEN);
         board.printBoard();
 
         System.out.println(board.whiteMoves);
         System.out.println(board.blackMoves);
 
+
+        System.out.println(board.board[0][0].pieceOnTile.getClass().getName());
+        System.out.println(board.board[0][0].pieceOnTile instanceof Rook);
+
+        Class c = board.board[0][0].pieceOnTile.getClass();
+
+
+
+
+
+        /*
+
         System.out.println(board.isWhiteInCheck);
         System.out.println(board.isBlackInCheck);
+
+        System.out.println(board.isWhiteInCheckMate);
+        System.out.println(board.isBlackInCheckMate);
+
+        System.out.println(board.isWhiteInStaleMate);
+        System.out.println(board.isBlackInStaleMate);
 
 
 
@@ -30,7 +48,7 @@ public class test {
 
 
 
-        /*
+
 
 
         String str = board.BoardToFen();
