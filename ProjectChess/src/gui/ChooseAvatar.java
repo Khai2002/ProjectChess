@@ -61,42 +61,42 @@ public class ChooseAvatar extends JFrame implements ActionListener {
         panel2.setBounds(0,60,500,450);
         panel2.setLayout(new GridLayout(2,3,0,0));
 
-        avatar1 = new ImageIcon("avatar1.png");
+        avatar1 = new ImageIcon("res/avatar1.png");
 
         button1 = new JButton();
         button1.setIcon(avatar1);
         button1.setBackground(Color.orange);
         button1.addActionListener(this);
 
-        avatar2 = new ImageIcon("avatar2.png");
+        avatar2 = new ImageIcon("res/avatar2.png");
 
         button2 = new JButton();
         button2.setIcon(avatar2);
         button2.setBackground(Color.orange);
         button2.addActionListener(this);
 
-        avatar3= new ImageIcon("avatar3.png");
+        avatar3= new ImageIcon("res/avatar3.png");
 
         button3 = new JButton();
         button3.setIcon(avatar3);
         button3.setBackground(Color.orange);
         button3.addActionListener(this);
 
-        avatar4 = new ImageIcon("avatar4.png");
+        avatar4 = new ImageIcon("/avatar4.png");
 
         button4 = new JButton();
         button4.setIcon(avatar4);
         button4.setBackground(Color.pink);
         button4.addActionListener(this);
 
-        avatar5 = new ImageIcon("avatar5.png");
+        avatar5 = new ImageIcon("res/avatar5.png");
 
         button5 = new JButton();
         button5.setIcon(avatar5);
         button5.setBackground(Color.pink);
         button5.addActionListener(this);
 
-        avatar6 = new ImageIcon("avatar6.png");
+        avatar6 = new ImageIcon("res/avatar6.png");
 
         button6 = new JButton();
         button6.setIcon(avatar6);
