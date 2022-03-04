@@ -1,23 +1,27 @@
 package gui;
+import board.Board;
+
 import java.awt.*;
+import java.io.IOException;
 import javax.swing .*;
 
 
 public class Interface extends JFrame {
 
-    Chessboard board;
+    Chessboard chessBoard;
 
     ImageIcon avatar1;
     ImageIcon avatar2;
     String name1;
     String name2;
 
-    public static void main(String[] args) {
-        new Interface();
+    public static void main(String[] args) throws IOException {
+        Board board = new Board(Board.startFEN);
+        new Interface(board);
     }
 
-    Interface(){
-        board = new Chessboard();
+    Interface(Board board) throws IOException {
+        chessBoard = new Chessboard(board);
 
         ChooseName chooseName1 = new ChooseName();
         name1 = chooseName1.text.getText();
@@ -38,7 +42,7 @@ public class Interface extends JFrame {
         Image imageScaled = image.getScaledInstance(5,5,5);
 
 
-        window.add(board);
+        window.add(chessBoard);
         this.pack();
         window.setVisible(true);
 

@@ -82,7 +82,7 @@ public class ChooseAvatar extends JFrame implements ActionListener {
         button3.setBackground(Color.orange);
         button3.addActionListener(this);
 
-        avatar4 = new ImageIcon("/avatar4.png");
+        avatar4 = new ImageIcon("res/avatar4.png");
 
         button4 = new JButton();
         button4.setIcon(avatar4);
