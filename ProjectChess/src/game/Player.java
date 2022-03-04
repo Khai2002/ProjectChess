@@ -39,7 +39,7 @@ public class Player {
     public void updateAllMove(Board board){
         List<Move> moveGenerated;
         for(Piece piece: pieceInventory){
-            piece.generateMove(board.board);
+            piece.generateMove(board);
             moveGenerated = piece.listMove;
             if(moveGenerated != null){
                 this.possibleMove.addAll(moveGenerated);

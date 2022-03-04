@@ -9,6 +9,7 @@ public class Move implements Serializable {
 
     public String notation;
     public Piece piece;
+    public Piece affectedPiece = null;
     public Tile startingTile;
     public Tile destinationTile;
 
@@ -16,8 +17,16 @@ public class Move implements Serializable {
         this.piece = piece;
         this.startingTile = startingTile;
         this.destinationTile = destinationTile;
-        // Lam method de ap dung vao trong nay nhe
         this.notation = this.createNotation();
+    }
+
+    public Move(Piece piece, Piece affectedPiece, Tile startingTile, Tile destinationTile){
+        this.piece = piece;
+        this.affectedPiece = affectedPiece;
+        this.startingTile = startingTile;
+        this.destinationTile = destinationTile;
+        this.notation = this.createNotation();
+
     }
 
     public String createNotation(){

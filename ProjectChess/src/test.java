@@ -14,17 +14,20 @@ public class test {
         long avantTraitement = System.currentTimeMillis();
 
 
-        Board board = new Board(Board.startFEN);
+        Board board = new Board(Board.castle2FEN);
         board.printBoard();
 
         System.out.println(board.whiteMoves);
         System.out.println(board.blackMoves);
 
 
-        System.out.println(board.board[0][0].pieceOnTile.getClass().getName());
-        System.out.println(board.board[0][0].pieceOnTile instanceof Rook);
+        //System.out.println(board.board[0][0].pieceOnTile.getClass().getName());
+        //System.out.println(board.board[0][0].pieceOnTile instanceof Rook);
 
-        Class c = board.board[0][0].pieceOnTile.getClass();
+        for(int i = 0; i<4; i++){System.out.println(board.castleAvailable[i]);}
+
+        for(int i = 0; i<4; i++){System.out.println(board.castleCurrentAvailable[i]);}
+
 
 
 

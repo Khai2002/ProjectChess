@@ -1,5 +1,6 @@
 package piece;
 
+import board.Board;
 import board.Tile;
 import move.Move;
 
@@ -9,6 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class King extends Piece{
+
+    boolean castleKingSide;
+    boolean castleQueenSide;
 
     public King(int[] position, int color){
         super(position, color);
@@ -25,20 +29,20 @@ public class King extends Piece{
     }
 
     @Override
-    public void generateMove(Tile[][] board){
+    public void generateMove(Board board){
         int[][] moveCoefficient = {{0,1},{1,0},{0,-1},{-1,0},{1,1},{-1,-1},{-1,1},{1,-1}};
         int temp;
         int xCoordinate;
         int yCoordinate;
 
         for(int[] move: moveCoefficient){
-            while(checkValidMove(this.position, move,1, board) != 0){
-                temp = checkValidMove(this.position, move,1, board);
+            while(checkValidMove(this.position, move,1, board.board) != 0){
+                temp = checkValidMove(this.position, move,1, board.board);
                 xCoordinate = this.position[0] + move[0];
                 yCoordinate = this.position[1] + move[1];
 
                 if(temp != 0){
-                    listMove.add(new Move(this,board[this.position[0]][this.position[1]],board[xCoordinate][yCoordinate]));
+                    listMove.add(new Move(this,board.board[this.position[0]][this.position[1]],board.board[xCoordinate][yCoordinate]));
                     break;
                 }else{
                     break;
@@ -46,9 +50,13 @@ public class King extends Piece{
             }
 
         }
-        this.listMove = new ArrayList<>(new HashSet<>(this.listMove));
+
+
+
 
     }
+
+
 
 
 }

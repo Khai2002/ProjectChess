@@ -4,6 +4,7 @@ import board.Board;
 import board.Tile;
 import move.Move;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class Piece implements Serializable {
     public String name;
     public List<Move> listMove = new LinkedList<>();
 
+
     // Constructors ========================================================== //
 
     public Piece(int[] position, int color){
@@ -29,7 +31,7 @@ public class Piece implements Serializable {
 
     // Methods ============================================================== //
 
-    public void generateMove(Tile[][] board){}
+    public void generateMove(Board board){}
 
     public int checkValidMove(int[] pieceCoordinate,int[] move,int coeff, Tile[][] board){
 
