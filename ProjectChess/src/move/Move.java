@@ -61,6 +61,14 @@ public class Move implements Serializable {
         // Special Moves
         return null;
     }
+    
+    public boolean equals(Move otherMove){
+
+        if(Arrays.equals(this.startingTile.tileCoordinate,otherMove.startingTile.tileCoordinate) && Arrays.equals(this.destinationTile.tileCoordinate,otherMove.destinationTile.tileCoordinate)){
+            return true;
+        }
+        return false;
+    }
 
     public String toString(){
         if(this.type == 2){
