@@ -67,6 +67,7 @@ public class ChooseAvatar extends JFrame implements ActionListener {
         button1.setIcon(avatar1);
         button1.setBackground(Color.orange);
         button1.addActionListener(this);
+        button1.setFocusable(false);
 
         avatar2 = new ImageIcon("res/avatar2.png");
 
@@ -74,6 +75,7 @@ public class ChooseAvatar extends JFrame implements ActionListener {
         button2.setIcon(avatar2);
         button2.setBackground(Color.orange);
         button2.addActionListener(this);
+        button2.setFocusable(false);
 
         avatar3= new ImageIcon("res/avatar3.png");
 
@@ -81,6 +83,7 @@ public class ChooseAvatar extends JFrame implements ActionListener {
         button3.setIcon(avatar3);
         button3.setBackground(Color.orange);
         button3.addActionListener(this);
+        button3.setFocusable(false);
 
         avatar4 = new ImageIcon("res/avatar4.png");
 
@@ -88,6 +91,7 @@ public class ChooseAvatar extends JFrame implements ActionListener {
         button4.setIcon(avatar4);
         button4.setBackground(Color.pink);
         button4.addActionListener(this);
+        button4.setFocusable(false);
 
         avatar5 = new ImageIcon("res/avatar5.png");
 
@@ -95,6 +99,7 @@ public class ChooseAvatar extends JFrame implements ActionListener {
         button5.setIcon(avatar5);
         button5.setBackground(Color.pink);
         button5.addActionListener(this);
+        button5.setFocusable(false);
 
         avatar6 = new ImageIcon("res/avatar6.png");
 
@@ -102,6 +107,7 @@ public class ChooseAvatar extends JFrame implements ActionListener {
         button6.setIcon(avatar6);
         button6.setBackground(Color.pink);
         button6.addActionListener(this);
+        button6.setFocusable(false);
 
         panel1.add(this.text);
 

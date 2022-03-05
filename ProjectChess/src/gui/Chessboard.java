@@ -15,9 +15,21 @@ public class Chessboard extends JPanel {
 
     public Board board;
 
+    int theme;
+    Color[] themeChessCom = {new Color(238, 238, 210), new Color(118, 150, 86)};
+    Color[] themeLichess = {new Color(240,217,181), new Color(181,136,99)};
+    Color[] themeBlackPink = {new Color(219, 130, 207), new Color(52, 41, 52)};
+
     Chessboard(Board board) throws IOException {
         this.board = board;
         loadImage();
+        this.theme = 0;
+    }
+
+    Chessboard(Board board, int theme) throws IOException {
+        this.board = board;
+        loadImage();
+        this.theme = theme;
     }
 
     @Override
@@ -26,16 +38,28 @@ public class Chessboard extends JPanel {
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
                 if(white){
-                    g.setColor(Color.white);
+                    if(theme == 0){
+                        g.setColor(themeChessCom[0]);
+                    }else if(theme == 1){
+                        g.setColor(themeLichess[0]);
+                    }else if(theme == 2){
+                        g.setColor(themeBlackPink[0]);
+                    }
                 }else{
-                    g.setColor(Color.green);
+                    if(theme == 0){
+                        g.setColor(themeChessCom[1]);
+                    }else if(theme == 1){
+                        g.setColor(themeLichess[1]);
+                    }else if(theme == 2){
+                        g.setColor(themeBlackPink[1]);
+                    }
                 }
-                g.fillRect(i*64+30, j*64+55, 64, 64);
+                g.fillRect(j*64+55,i*64+50, 64, 64);
                 white = !white;
 
                 if(board.board[i][j] instanceof Tile.OccupiedTile){
                     int pieceIconsPosition = board.board[i][j].pieceOnTile.id + 6;
-                    g.drawImage(pieceIcons[pieceIconsPosition], j*64+30,i*64+55,this);
+                    g.drawImage(pieceIcons[pieceIconsPosition], j*64+55,i*64+50,this);
                 }
             }
             white=!white;

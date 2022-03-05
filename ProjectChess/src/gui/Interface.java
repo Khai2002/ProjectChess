@@ -21,7 +21,7 @@ public class Interface extends JFrame {
     }
 
     Interface(Board board) throws IOException {
-        chessBoard = new Chessboard(board);
+        chessBoard = new Chessboard(board,2);
 
         ChooseName chooseName1 = new ChooseName();
         name1 = chooseName1.text.getText();
@@ -34,7 +34,7 @@ public class Interface extends JFrame {
         window.setSize(1160,660);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
-        window.setBackground(Color.black);
+        window.setBackground(new Color(58,57,53));
 
         //Logo
         ImageIcon icon = new ImageIcon("logo.jpg");
