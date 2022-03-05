@@ -695,4 +695,21 @@ public class Board implements Serializable {
         }
         System.out.println("  0 1 2 3 4 5 6 7");
     }
+    
+    //Print out chess board 123 abc
+    public void printBoard1(){
+        for(int i = 0; i<8; i++){
+            System.out.print((8-i) + " ");
+            for(int j = 0; j<8; j++) {
+                if(board[i][j] instanceof Tile.EmptyTile){
+                    System.out.print(PIECE_PRINT[6]+" ");
+                }else{
+                    System.out.print(PIECE_PRINT[board[i][j].pieceOnTile.id + 6]+ " ");
+                }
+            }
+
+            System.out.println();
+        }
+        System.out.println("  a b c d e f g h");
+    }
 }
