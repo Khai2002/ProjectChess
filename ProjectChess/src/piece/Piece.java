@@ -27,6 +27,13 @@ public class Piece implements Serializable {
     public Piece(int[] position, int color){
         this.position = position;
         this.color = color;
+        this.moved = false;
+    }
+
+    public Piece(int[] position, int color, boolean moved){
+        this.position = position;
+        this.color = color;
+        this.moved = moved;
     }
 
     // Methods ============================================================== //

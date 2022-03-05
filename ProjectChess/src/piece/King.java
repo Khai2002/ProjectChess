@@ -14,8 +14,8 @@ public class King extends Piece{
     boolean castleKingSide;
     boolean castleQueenSide;
 
-    public King(int[] position, int color){
-        super(position, color);
+    public King(int[] position, int color, boolean moved){
+        super(position, color, moved);
         this.value = 999;
         this.id = 6 * this.color;
         this.name = "King";

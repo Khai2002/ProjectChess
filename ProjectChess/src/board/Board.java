@@ -2,7 +2,6 @@ package board;
 
 import move.Move;
 import piece.*;
-import game.Player;
 
 import java.io.Serializable;
 import java.util.*;
@@ -13,6 +12,7 @@ public class Board implements Serializable {
 
     public static final Character[] COLUMN_NOTATION = {'a','b','c','d','e','f','g','h'};
     public static final Character[] PIECE_PRINT = {'k','q','b','n','r','p','_','P','R','N','B','Q','K'};
+
 
     public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final String testFEN = "8/8/8/6rk/6P1/6P1/8/8 b KQkq - 0 1";
@@ -43,11 +43,11 @@ public class Board implements Serializable {
     public int fullMoveCounter; // Number for total move in the game
 
     // Attributes for White and Black
-    public List<Move> whiteMoves;
-    public List<Move> blackMoves;
+    public LinkedList<Move> whiteMoves;
+    public LinkedList<Move> blackMoves;
 
-    public List<Piece> whitePieces;
-    public List<Piece> blackPieces;
+    public LinkedList<Piece> whitePieces;
+    public LinkedList<Piece> blackPieces;
 
     public int[] whiteKingCoordinate;
     public int[] blackKingCoordinate;
@@ -125,7 +125,6 @@ public class Board implements Serializable {
             this.fullMoveCounter ++;
         }
 
-        //this.board = this.previousBoard.board;
 
         this.board = new Tile[8][8];
         for(int i = 0; i<8; i++){
@@ -143,15 +142,15 @@ public class Board implements Serializable {
         
         if(Math.abs(currentId)==1){
             if(currentId>0){
-                temp = new Pawn(destinationCoordinate, 1);
+                temp = new Pawn(destinationCoordinate, 1, true);
             }else {
-                temp = new Pawn(destinationCoordinate, -1);
+                temp = new Pawn(destinationCoordinate, -1, true);
             }
         }else if(Math.abs(currentId)==2){
             if(currentId>0){
-                temp = new Rook(destinationCoordinate, 1);
+                temp = new Rook(destinationCoordinate, 1, true);
             }else {
-                temp = new Rook(destinationCoordinate, -1);
+                temp = new Rook(destinationCoordinate, -1, true);
             }
         }else if(Math.abs(currentId)==3){
             if(currentId>0){
@@ -173,14 +172,15 @@ public class Board implements Serializable {
             }
         }else if(Math.abs(currentId)==6){
             if(currentId>0){
-                temp = new King(destinationCoordinate, 1);
+                temp = new King(destinationCoordinate, 1, true);
+                this.castleAvailable[0] = false;
+                this.castleAvailable[1] = false;
             }else {
-                temp = new King(destinationCoordinate, -1);
+                temp = new King(destinationCoordinate, -1, true);
+                this.castleAvailable[2] = false;
+                this.castleAvailable[3] = false;
             }
         }
-        
-        //Piece temp = move.piece;
-        //temp.updateStatus(move);
 
         this.board[startCoordinate[0]][startCoordinate[1]] = new Tile.EmptyTile(startCoordinate);
         this.board[destinationCoordinate[0]][destinationCoordinate[1]] = new Tile.OccupiedTile(destinationCoordinate,temp);
@@ -190,6 +190,21 @@ public class Board implements Serializable {
 
         this.whiteKingCoordinate = this.getKingPosition(1);
         this.blackKingCoordinate = this.getKingPosition(-1);
+
+        // Disable castling right if Rook is moved
+        if(currentId == 2 && (!move.piece.moved)){
+            if (temp.position[1]>this.whiteKingCoordinate[1]){
+                this.castleAvailable[0] = false;
+            }else{
+                this.castleAvailable[1] = false;
+            }
+        }else if(currentId == -2 && (!move.piece.moved)){
+            if (temp.position[1]>this.blackKingCoordinate[1]){
+                this.castleAvailable[2] = false;
+            }else{
+                this.castleAvailable[3] = false;
+            }
+        }
 
         this.whiteMoves = this.getMove(this.whitePieces);
         this.blackMoves = this.getMove(this.blackPieces);
@@ -218,8 +233,8 @@ public class Board implements Serializable {
     // Methods ============================================================== //
 
     // Collect a list of all piece belonging to a color
-    public List<Piece> getPiece(int color){
-        List<Piece> list_piece = new LinkedList<>();
+    public LinkedList<Piece> getPiece(int color){
+        LinkedList<Piece> list_piece = new LinkedList<>();
         for(int i = 0; i<8; i++){
             for(int j = 0; j<8;j++){
                 if(this.board[i][j] instanceof Tile.OccupiedTile && this.board[i][j].pieceOnTile.color == color){
@@ -231,8 +246,8 @@ public class Board implements Serializable {
     }
 
     // Collect a list of all move by a color
-    public List<Move> getMove(List<Piece> listPiece){
-        List<Move> moveGenerated = new LinkedList<>();
+    public LinkedList<Move> getMove(LinkedList<Piece> listPiece){
+        LinkedList<Move> moveGenerated = new LinkedList<>();
 
         for(Piece piece:listPiece){
             piece.listMove = new ArrayList<>();
@@ -245,6 +260,7 @@ public class Board implements Serializable {
         return moveGenerated;
     }
 
+    // Get King position
     public int[] getKingPosition(int color){
 
         int[] kingCoordinate = new int[2];
@@ -336,32 +352,22 @@ public class Board implements Serializable {
     // Verify if in CheckMate
     public boolean isInCheckMate(int color){
         if(color == 1){
-            if(this.isWhiteInCheck && this.whiteMoves.isEmpty()){
-                return true;
-            }
+            return this.isWhiteInCheck && this.whiteMoves.isEmpty();
         }else{
-            if(this.isBlackInCheck && this.blackMoves.isEmpty()){
-                return true;
-            }
+            return this.isBlackInCheck && this.blackMoves.isEmpty();
         }
-        return false;
     }
 
     // Verify if in stalemate
     public boolean isInStalemate(int color){
         if(color == 1){
-            if((!this.isWhiteInCheck) && this.whiteMoves.isEmpty()){
-                return true;
-            }
+            return (!this.isWhiteInCheck) && this.whiteMoves.isEmpty();
         }else{
-            if((!this.isBlackInCheck) && this.blackMoves.isEmpty()){
-                return true;
-            }
+            return (!this.isBlackInCheck) && this.blackMoves.isEmpty();
         }
-        return false;
     }
 
-
+    // add castle Move to list Move if possible
     public void checkCastleAvailable(int color){
 
         int row;
@@ -375,7 +381,7 @@ public class Board implements Serializable {
                     tileInDanger = false;
                     for(Move move:this.blackMoves){
                         if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
-                            System.out.println(move);
+                            //System.out.println(move);
                             tileInDanger = true;
                         }
                     }
@@ -393,7 +399,7 @@ public class Board implements Serializable {
                     tileInDanger = false;
                     for(Move move:this.blackMoves){
                         if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
-                            System.out.println(move);
+                            //System.out.println(move);
                             tileInDanger = true;
                         }
                     }
@@ -405,6 +411,16 @@ public class Board implements Serializable {
                 this.castleCurrentAvailable[1] = false;
             }
 
+            if(this.castleCurrentAvailable[0]){
+                Move newMove = new Move(board[7][4].pieceOnTile, board[7][7].pieceOnTile,board[7][4], board[7][6], board[7][7], board[7][5]);
+                this.whiteMoves.add(newMove);
+            }
+
+            if(this.castleCurrentAvailable[1]){
+                Move newMove = new Move(board[7][4].pieceOnTile, board[7][0].pieceOnTile,board[7][4], board[7][2], board[7][0], board[7][3]);
+                this.whiteMoves.add(newMove);
+            }
+
         }else{
             row = 0;
             if(this.castleAvailable[2]){
@@ -413,7 +429,7 @@ public class Board implements Serializable {
                     tileInDanger = false;
                     for(Move move:this.whiteMoves){
                         if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
-                            System.out.println(move);
+                            //System.out.println(move);
                             tileInDanger = true;
                         }
                     }
@@ -431,7 +447,7 @@ public class Board implements Serializable {
                     tileInDanger = false;
                     for(Move move:this.whiteMoves){
                         if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
-                            System.out.println(move);
+                            //System.out.println(move);
                             tileInDanger = true;
                         }
                     }
@@ -443,19 +459,17 @@ public class Board implements Serializable {
                 this.castleCurrentAvailable[3] = false;
             }
 
-        }
-
-    }
-
-    public void addNormalCastleMove(int color){
-        if(color == 1){
-            if(this.castleCurrentAvailable[0]){
-                Move newMove = new Move(board[7][4].pieceOnTile, board[7][7].pieceOnTile,board[7][4],board[7][6]);
+            if(this.castleCurrentAvailable[2]){
+                Move newMove = new Move(board[0][4].pieceOnTile, board[0][7].pieceOnTile,board[0][4], board[0][6], board[0][7], board[0][5]);
+                this.blackMoves.add(newMove);
             }
 
-        }else{
-
+            if(this.castleCurrentAvailable[3]){
+                Move newMove = new Move(board[0][4].pieceOnTile, board[0][0].pieceOnTile,board[0][4], board[0][2], board[0][0], board[0][3]);
+                this.blackMoves.add(newMove);
+            }
         }
+
     }
 
     // Transform FEN code to chess board
@@ -506,15 +520,15 @@ public class Board implements Serializable {
 
                 if(Math.abs(tempo)==1){
                     if(tempo>0){
-                        pieceOnTile = new Pawn(coord, 1);
+                        pieceOnTile = new Pawn(coord, 1, false);
                     }else {
-                        pieceOnTile = new Pawn(coord, -1);
+                        pieceOnTile = new Pawn(coord, -1, false);
                     }
                 }else if(Math.abs(tempo)==2){
                     if(tempo>0){
-                        pieceOnTile = new Rook(coord, 1);
+                        pieceOnTile = new Rook(coord, 1, true);
                     }else {
-                        pieceOnTile = new Rook(coord, -1);
+                        pieceOnTile = new Rook(coord, -1, true);
                     }
                 }else if(Math.abs(tempo)==3){
                     if(tempo>0){
@@ -536,9 +550,9 @@ public class Board implements Serializable {
                     }
                 }else if(Math.abs(tempo)==6){
                     if(tempo>0){
-                        pieceOnTile = new King(coord, 1);
+                        pieceOnTile = new King(coord, 1, false);
                     }else {
-                        pieceOnTile = new King(coord, -1);
+                        pieceOnTile = new King(coord, -1, false);
                     }
                 }
 
@@ -605,9 +619,8 @@ public class Board implements Serializable {
 
     // Transform chess board to Fen
     public String BoardToFen(){
-        StringBuilder fenCode = new StringBuilder(new String());
+        StringBuilder fenCode = new StringBuilder("");
         int counter = 0;
-        boolean checkLast = false;
 
         // Piece position
         for(int i = 0; i<8; i++){

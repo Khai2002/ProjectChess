@@ -9,8 +9,8 @@ import java.util.List;
 
 public class Rook extends Piece{
 
-    public Rook(int[] position, int color){
-        super(position, color);
+    public Rook(int[] position, int color, boolean moved){
+        super(position, color, moved);
         this.value = 5;
         this.id = 2 * this.color;
         this.name = "Rook";

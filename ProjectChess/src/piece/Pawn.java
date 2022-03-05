@@ -13,8 +13,8 @@ public class Pawn extends Piece{
 
     public boolean checkDoubleMove;
 
-    public Pawn(int[] position, int color){
-        super(position, color);
+    public Pawn(int[] position, int color, boolean moved){
+        super(position, color, moved);
         this.value = 1;
         this.id = 1 * this.color;
         this.name = "Pawn";
