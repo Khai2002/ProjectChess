@@ -12,6 +12,7 @@ public class Board implements Serializable {
 
     public static final Character[] COLUMN_NOTATION = {'a','b','c','d','e','f','g','h'};
     public static final Character[] PIECE_PRINT = {'k','q','b','n','r','p','_','P','R','N','B','Q','K'};
+    public static final Character[] ROW_NOTATION = {'1','2','3','4','5','6','7','8'};
 
 
     public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
