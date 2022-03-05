@@ -3,6 +3,8 @@ import board.*;
 import game.Player;
 import move.Move;
 import piece.*;
+import game.*;
+import java.util.*;
 
 
 import java.util.LinkedList;
@@ -10,7 +12,8 @@ import java.util.List;
 
 public class test {
     public static void main(String[] args) throws Exception {
-
+    
+        Scanner sc= new Scanner(System.in);
         long avantTraitement = System.currentTimeMillis();
 
 
@@ -20,6 +23,8 @@ public class test {
         System.out.println(board.whiteMoves);
         System.out.println(board.blackMoves);
 
+        Loop loop = new Loop();
+        loop.gameLoop(board, sc);
 
         //System.out.println(board.board[0][0].pieceOnTile.getClass().getName());
         //System.out.println(board.board[0][0].pieceOnTile instanceof Rook);
