@@ -15,7 +15,11 @@ public class Move implements Serializable {
     public Tile affectedStartingTile;
     public Tile affectedDestinationTile;
     public int type;    // 0 for normal, 1 for castle, 2 for en passant
-
+    
+    public Move(){
+        
+    }
+    
     public Move(Piece piece, Tile startingTile , Tile destinationTile){
         this.piece = piece;
         this.startingTile = startingTile;
