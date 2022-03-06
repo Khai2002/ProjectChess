@@ -9,7 +9,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class Chessboard extends JPanel {
+public class Chessboard extends JComponent {
 
     public static Image[] pieceIcons = new Image[13];
 
@@ -19,6 +19,9 @@ public class Chessboard extends JPanel {
     Color[] themeChessCom = {new Color(238, 238, 210), new Color(118, 150, 86)};
     Color[] themeLichess = {new Color(240,217,181), new Color(181,136,99)};
     Color[] themeBlackPink = {new Color(219, 130, 207), new Color(52, 41, 52)};
+
+    Color color1;
+    Color color2;
 
     Chessboard(Board board) throws IOException {
         this.board = board;
@@ -33,33 +36,39 @@ public class Chessboard extends JPanel {
     }
 
     @Override
-    public void paint(Graphics g){
+    public void paintComponent(Graphics g){
         boolean white = true;
+
+        switch (theme){
+            case 0:
+                color1 = themeChessCom[0];
+                color2 = themeChessCom[1];
+                break;
+
+            case 1:
+                color1 = themeLichess[0];
+                color2 = themeLichess[1];
+                break;
+
+            case 2:
+                color1 = themeBlackPink[0];
+                color2 = themeBlackPink[1];
+                break;
+        }
+
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
                 if(white){
-                    if(theme == 0){
-                        g.setColor(themeChessCom[0]);
-                    }else if(theme == 1){
-                        g.setColor(themeLichess[0]);
-                    }else if(theme == 2){
-                        g.setColor(themeBlackPink[0]);
-                    }
+                    g.setColor(color1);
                 }else{
-                    if(theme == 0){
-                        g.setColor(themeChessCom[1]);
-                    }else if(theme == 1){
-                        g.setColor(themeLichess[1]);
-                    }else if(theme == 2){
-                        g.setColor(themeBlackPink[1]);
-                    }
+                    g.setColor(color2);
                 }
-                g.fillRect(j*64+55,i*64+50, 64, 64);
+                g.fillRect(j*64,i*64, 64, 64);
                 white = !white;
 
                 if(board.board[i][j] instanceof Tile.OccupiedTile){
                     int pieceIconsPosition = board.board[i][j].pieceOnTile.id + 6;
-                    g.drawImage(pieceIcons[pieceIconsPosition], j*64+55,i*64+50,this);
+                    g.drawImage(pieceIcons[pieceIconsPosition], j*64,i*64,this);
                 }
             }
             white=!white;
@@ -82,6 +91,11 @@ public class Chessboard extends JPanel {
         pieceIcons[12] = ImageIO.read(new File("res/King_w.png")).getScaledInstance(64,64,Image.SCALE_SMOOTH);
 
 
+    }
+
+    public void updateChessBoard(Board board){
+        this.board = board;
+        this.repaint();
     }
 
 
