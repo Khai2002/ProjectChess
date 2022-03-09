@@ -10,8 +10,8 @@ import javax.swing .*;
 
 public class Interface extends JFrame implements ActionListener {
 
-    Chessboard chessBoard;
-    Chessboard newChessBoard;
+    public Chessboard chessBoard;
+    public Chessboard newChessBoard;
 
     ImageIcon avatar1;
     ImageIcon avatar2;
@@ -26,6 +26,9 @@ public class Interface extends JFrame implements ActionListener {
 
     public String startingInput;
     public String destinationInput;
+
+    public int[] startingInputReal;
+    public int[] destinationInputReal;
 
     public static void main(String[] args) throws IOException {
         Board board = new Board(Board.startFEN);
@@ -63,6 +66,10 @@ public class Interface extends JFrame implements ActionListener {
         button.setText("Submit");
         button.setBounds(800,0,100,100);
         button.addActionListener(this);
+
+
+
+
 
         startingTextField = new JTextField();
         startingTextField.setBounds(800,150,100,50);

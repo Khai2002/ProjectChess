@@ -140,7 +140,7 @@ public class Board implements Serializable {
 
         Piece temp = null;
         int currentId = move.piece.id;
-        
+
         if(Math.abs(currentId)==1){
             if(currentId>0){
                 temp = new Pawn(destinationCoordinate, 1, true);
@@ -696,7 +696,7 @@ public class Board implements Serializable {
         }
         System.out.println("  0 1 2 3 4 5 6 7");
     }
-    
+
     //Print out chess board 123 abc
     public void printBoard1(){
         for(int i = 0; i<8; i++){
@@ -708,7 +708,6 @@ public class Board implements Serializable {
                     System.out.print(PIECE_PRINT[board[i][j].pieceOnTile.id + 6]+ " ");
                 }
             }
-
             System.out.println();
         }
         System.out.println("  a b c d e f g h");

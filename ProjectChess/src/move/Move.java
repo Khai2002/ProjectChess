@@ -4,6 +4,7 @@ import board.Tile;
 import piece.*;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class Move implements Serializable {
 
@@ -15,11 +16,7 @@ public class Move implements Serializable {
     public Tile affectedStartingTile;
     public Tile affectedDestinationTile;
     public int type;    // 0 for normal, 1 for castle, 2 for en passant
-    
-    public Move(){
-        
-    }
-    
+
     public Move(Piece piece, Tile startingTile , Tile destinationTile){
         this.piece = piece;
         this.startingTile = startingTile;
@@ -27,6 +24,8 @@ public class Move implements Serializable {
         this.notation = this.createNotation();
         this.type = 0;
     }
+
+    public Move(){}
 
     public Move(Piece piece, Piece affectedPiece, Tile startingTile, Tile destinationTile){
         this.piece = piece;
@@ -61,13 +60,12 @@ public class Move implements Serializable {
         // Special Moves
         return null;
     }
-    
-    public boolean equals(Move otherMove){
 
-        if(Arrays.equals(this.startingTile.tileCoordinate,otherMove.startingTile.tileCoordinate) && Arrays.equals(this.destinationTile.tileCoordinate,otherMove.destinationTile.tileCoordinate)){
-            return true;
-        }
-        return false;
+    public boolean equals(Move move){
+        return (this.startingTile.tileCoordinate[0] == move.startingTile.tileCoordinate[0]) &&
+                (this.startingTile.tileCoordinate[1] == move.startingTile.tileCoordinate[1]) &&
+                (this.destinationTile.tileCoordinate[0] == move.destinationTile.tileCoordinate[0]) &&
+                (this.destinationTile.tileCoordinate[1] == move.destinationTile.tileCoordinate[1]);
     }
 
     public String toString(){

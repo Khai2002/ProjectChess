@@ -113,7 +113,6 @@ public class Loop {
 
         }
     }
-
     public void gameLoopInterface(Board board, Interface interFace){
         this.listBoard.add(board);
         int count = 0;
@@ -141,8 +140,6 @@ public class Loop {
 
 
                     if((startingPosition == null) || (destinationPosition == null) || startingPosition instanceof Tile.EmptyTile){
-                        //System.out.println(startingPosition == null);
-                        //System.out.println(destinationPosition == null);
                         System.out.print("");
                         continue;
                     }
@@ -162,15 +159,15 @@ public class Loop {
                 interFace.updateInterface(this.listBoard.get(count));
             }
 
-            System.out.println("Wow I got out");
+            //System.out.println("Wow I got out");
 
             if (this.gameEnd(this.listBoard.get(count)) !=99){
-                System.out.println("End of the match");
+                //System.out.println("End of the match");
                 break;
             }
 
             if (this.listBoard.get(count).colorActive == -1) {
-                System.out.println("Hey guys Im here now");
+                //System.out.println("Hey guys Im here now");
                 Board newBoard = this.listBoard.get(count);
                 newBoard.printBoard1();
                 Move blackmove = new Move();
@@ -199,6 +196,123 @@ public class Loop {
                 whileCondition = true;
                 this.listBoard.add(new Board(newBoard, blackmove, 0));
                 count++;
+                interFace.updateInterface(this.listBoard.get(count));
+            }
+
+        }
+
+    }
+
+    public void gameLoopInterfaceFinal(Board board, Interface interFace){
+        this.listBoard.add(board);
+
+        while(this.gameEnd(this.listBoard.get(this.listBoard.size()-1)) == 99){
+
+            // Wait for input
+            while(interFace.chessBoard.definedMove == null){
+                System.out.print("");
+            }
+
+            this.listBoard.add(new Board(this.listBoard.get(this.listBoard.size()-1), interFace.chessBoard.definedMove,0));
+            interFace.chessBoard.definedMove = null;
+            interFace.updateInterface(this.listBoard.get(this.listBoard.size()-1));
+        }
+    }
+
+    public void gameLoopInterfaceTouch(Board board, Interface interFace){
+        this.listBoard.add(board);
+        int count = 0;
+        boolean whileCondition = true;
+
+
+        while (this.gameEnd(this.listBoard.get(count)) ==99) {
+
+            Tile startingPosition = null;
+            Tile destinationPosition = null;
+
+            if (this.listBoard.get(count).colorActive == 1) {
+                Board newBoard = this.listBoard.get(count);
+                newBoard.printBoard1();
+                Move whitemove = new Move();
+                do {
+
+                    if((interFace.chessBoard.startingCoordination != null) && (interFace.chessBoard.destinationCoordination != null)){
+                        startingPosition = board.board[interFace.chessBoard.startingCoordination[0]][interFace.chessBoard.startingCoordination[1]];
+                        destinationPosition = board.board[interFace.chessBoard.destinationCoordination[0]][interFace.chessBoard.destinationCoordination[1]];
+                        interFace.chessBoard.resetChessboard();
+                    }
+
+
+                    if((startingPosition == null) || (destinationPosition == null) || startingPosition instanceof Tile.EmptyTile){
+                        System.out.print("");
+                        continue;
+                    }
+
+                    whitemove = new Move(startingPosition.pieceOnTile, startingPosition, destinationPosition);
+                    System.out.println(whitemove.toString());
+
+
+                    for (Move move: newBoard.whiteMoves){
+                        if (move.equals(whitemove)){
+                            whileCondition = false;
+                        }
+                    }
+
+
+
+                } while (whileCondition);
+
+                whileCondition = true;
+
+                this.listBoard.add(new Board(newBoard, whitemove, 0));
+                count++;
+
+                System.out.println("Hey Im alive");
+                interFace.updateInterface(this.listBoard.get(count));
+            }
+
+            //System.out.println("Wow I got out");
+
+            if (this.gameEnd(this.listBoard.get(count)) !=99){
+                //System.out.println("End of the match");
+                break;
+            }
+
+            if (this.listBoard.get(count).colorActive == -1) {
+                //System.out.println("Hey guys Im here now");
+                Board newBoard = this.listBoard.get(count);
+                newBoard.printBoard1();
+                Move blackmove = new Move();
+                do {
+
+                    if((interFace.chessBoard.startingCoordination != null) && (interFace.chessBoard.destinationCoordination != null)){
+                        startingPosition = board.board[interFace.chessBoard.startingCoordination[0]][interFace.chessBoard.startingCoordination[1]];
+                        destinationPosition = board.board[interFace.chessBoard.destinationCoordination[0]][interFace.chessBoard.destinationCoordination[1]];
+                        interFace.chessBoard.resetChessboard();
+                    }
+
+
+                    if((startingPosition == null) || (destinationPosition == null) || startingPosition instanceof Tile.EmptyTile){
+                        System.out.print("");
+                        continue;
+                    }
+
+                    blackmove = new Move(startingPosition.pieceOnTile, startingPosition, destinationPosition);
+                    System.out.println(blackmove.toString());
+
+                    for (Move move: newBoard.blackMoves){
+                        if (move.equals(blackmove)){
+                            whileCondition = false;
+                        }
+                    }
+
+                } while (whileCondition);
+
+                whileCondition = true;
+
+                this.listBoard.add(new Board(newBoard, blackmove, 0));
+                count++;
+
                 interFace.updateInterface(this.listBoard.get(count));
             }
 

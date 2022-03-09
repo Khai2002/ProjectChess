@@ -51,11 +51,13 @@ public class Pawn extends Piece{
         int xCoordinate = this.position[0];
         int yCoordinate = this.position[1];
         // Check if pawn can move forward 1 tile
-        if(board.board[xCoordinate-this.color][yCoordinate] instanceof Tile.EmptyTile){
+
+
+        if(xCoordinate-this.color>=0 && xCoordinate-this.color<8 && board.board[xCoordinate-this.color][yCoordinate] instanceof Tile.EmptyTile){
             listMove.add(new Move(this,board.board[xCoordinate][yCoordinate],board.board[xCoordinate-this.color][yCoordinate]));
 
             // Check if pawn can move forward 2 tiles
-            if(board.board[xCoordinate-this.color*2][yCoordinate] instanceof Tile.EmptyTile && !this.moved){
+            if(!this.moved && board.board[xCoordinate-this.color*2][yCoordinate] instanceof Tile.EmptyTile){
                 listMove.add(new Move(this,board.board[xCoordinate][yCoordinate],board.board[xCoordinate-this.color*2][yCoordinate]));
             }
         }
