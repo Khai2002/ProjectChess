@@ -116,6 +116,27 @@ public class Chessboard extends JComponent implements MouseListener {
 
                 white = !white;
 
+                if(j == 0){
+                    g.setFont(new Font("Comic Sans", Font.BOLD, 13));
+                    if(white){
+                        g.setColor(color1);
+                    }else{
+                        g.setColor(color2);
+                    }
+                    g.drawString(Integer.toString(8-i),3,i*64+14);
+                }
+
+                Character[] characters = new Character[]{'a','b','c','d','e','f','g','h'};
+                if(i==7){
+                    g.setFont(new Font("Comic Sans", Font.BOLD, 13));
+                    if(white){
+                        g.setColor(color1);
+                    }else{
+                        g.setColor(color2);
+                    }
+                    g.drawString(Character.toString(characters[j]),j*64+52,506);
+                }
+
                 if(board.board[i][j] instanceof Tile.OccupiedTile){
                     int pieceIconsPosition = board.board[i][j].pieceOnTile.id + 6;
                     g.drawImage(pieceIcons[pieceIconsPosition], j*64,i*64,this);
