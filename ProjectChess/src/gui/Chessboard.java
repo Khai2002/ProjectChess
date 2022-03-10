@@ -7,12 +7,16 @@ import move.Move;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
 
-public class Chessboard extends JComponent implements MouseListener {
+public class Chessboard extends JComponent implements MouseListener, ActionListener {
 
     public static Image[] pieceIcons = new Image[13];
 
@@ -23,11 +27,24 @@ public class Chessboard extends JComponent implements MouseListener {
     public boolean tileChose;
     public int[] highlightTile;
 
+    public Timer timerAnimation;
+    public Image pieceIconType;
+    public int xPiece;
+    public int yPiece;
+    public int xGoal;
+    public int yGoal;
+    public int xVelocity;
+    public int yVelocity;
+    public boolean isAnimating;
+
+    public LinkedList<Integer[]> dottedTiles =  new LinkedList<>();
+
     public Move definedMove;
 
 
     int theme;
-    Color[] themeChessCom = {new Color(238, 238, 210), new Color(118, 150, 86), new Color(246,246,105), new Color(186,202,43)};
+    Color[] themeChessCom = {new Color(238, 238, 210), new Color(118, 150, 86), new Color(246,246,105),
+            new Color(186,202,43),new Color(214,214,189), new Color(106,135,77),};
     Color[] themeLichess = {new Color(240,217,181), new Color(181,136,99), new Color(205,210,106), new Color(170,162,58)};
     Color[] themeBlackPink = {new Color(219, 130, 207), new Color(52, 41, 52)};
 
@@ -35,11 +52,16 @@ public class Chessboard extends JComponent implements MouseListener {
     Color color2;
     Color color3;
     Color color4;
+    Color color5;
+    Color color6;
 
     Chessboard(Board board) throws IOException {
         this.board = board;
         loadImage();
         this.theme = 0;
+        this.timerAnimation = new Timer(10,this);
+        this.timerAnimation.start();
+        this.isAnimating = false;
         this.addMouseListener(this);
         this.tileChose = false;
     }
@@ -48,6 +70,9 @@ public class Chessboard extends JComponent implements MouseListener {
         this.board = board;
         loadImage();
         this.theme = theme;
+        this.timerAnimation = new Timer(50,this);
+        this.timerAnimation.start();
+        this.isAnimating = false;
         this.addMouseListener(this);
         this.tileChose = false;
     }
@@ -62,6 +87,8 @@ public class Chessboard extends JComponent implements MouseListener {
                 color2 = themeChessCom[1];
                 color3 = themeChessCom[2];
                 color4 = themeChessCom[3];
+                color5 = themeChessCom[4];
+                color6 = themeChessCom[5];
                 break;
 
             case 1:
@@ -137,12 +164,58 @@ public class Chessboard extends JComponent implements MouseListener {
                     g.drawString(Character.toString(characters[j]),j*64+52,506);
                 }
 
-                if(board.board[i][j] instanceof Tile.OccupiedTile){
-                    int pieceIconsPosition = board.board[i][j].pieceOnTile.id + 6;
-                    g.drawImage(pieceIcons[pieceIconsPosition], j*64,i*64,this);
+
+
+
+                //System.out.println(dottedTiles);
+
+                for(Integer[] dot : dottedTiles){
+                    if(Arrays.equals(dot, new Integer[]{i,j})){
+                        if(white){
+                            g.setColor(color6);
+                        }else{
+                            g.setColor(color5);
+                        }
+
+                        this.drawCenteredCircle((Graphics2D) g,j*64+32,i*64+32,20);
+                    }
                 }
+
+                if(isAnimating){
+
+                    // Animation Board
+                    if(board.board[i][j] instanceof Tile.OccupiedTile){
+                        if(board.previousMove == null){
+                            int pieceIconsPosition = board.board[i][j].pieceOnTile.id + 6;
+                            g.drawImage(pieceIcons[pieceIconsPosition], j*64,i*64,this);
+                        }else if(board.previousMove.destinationTile.tileCoordinate[0]==i && board.previousMove.destinationTile.tileCoordinate[1]==j){
+
+                        }else{
+                            int pieceIconsPosition = board.board[i][j].pieceOnTile.id + 6;
+                            g.drawImage(pieceIcons[pieceIconsPosition], j*64,i*64,this);
+                        }
+
+                    }
+
+                }else{
+
+                    // Non Animation Board
+                    if(board.board[i][j] instanceof Tile.OccupiedTile){
+                        int pieceIconsPosition = board.board[i][j].pieceOnTile.id + 6;
+                        g.drawImage(pieceIcons[pieceIconsPosition], j*64,i*64,this);
+                    }
+
+                }
+
+
+
+
             }
             white=!white;
+        }
+
+        if(isAnimating){
+            g.drawImage(pieceIconType,xPiece,yPiece,this);
         }
 
     }
@@ -166,6 +239,50 @@ public class Chessboard extends JComponent implements MouseListener {
 
     public void updateChessBoard(Board board){
         this.board = board;
+
+        this.xPiece = board.previousMove.startingTile.tileCoordinate[1] * 64;
+        this.yPiece = board.previousMove.startingTile.tileCoordinate[0] * 64;
+
+        this.xGoal = board.previousMove.destinationTile.tileCoordinate[1] * 64;
+        this.yGoal = board.previousMove.destinationTile.tileCoordinate[0] * 64;
+
+
+        if(xGoal == xPiece){
+            xVelocity = 0;
+            yVelocity = 1;
+        }else if(yGoal == yPiece){
+            yVelocity = 0;
+            xVelocity = 1;
+        }else{
+            if(Math.abs(xGoal-xPiece)<=Math.abs(yGoal-yPiece)){
+                xVelocity = 1;
+                if(xGoal == yPiece){
+
+                }
+                yVelocity = Math.abs(yGoal-yPiece)/Math.abs(xGoal-xPiece);
+            }else{
+                yVelocity = 1;
+                xVelocity = Math.abs(xGoal-xPiece)/Math.abs(yGoal-yPiece);
+            }
+        }
+
+        if(xGoal<xPiece){
+            xVelocity *= -1;
+        }
+
+        if(yGoal<yPiece){
+            yVelocity *= -1;
+        }
+
+
+
+        xVelocity *= 1;
+        yVelocity *= 1;
+
+
+        this.pieceIconType = pieceIcons[board.previousMove.piece.id + 6];
+        System.out.println("Updating Chess Board with " + xPiece + " "+ yPiece + " "+ xGoal+" "+yGoal);
+        this.isAnimating = true;
         this.repaint();
     }
 
@@ -174,64 +291,15 @@ public class Chessboard extends JComponent implements MouseListener {
         this.destinationCoordination = null;
     }
 
+    public void drawCenteredCircle(Graphics2D g, int x, int y, int r) {
+        x = x-(r/2);
+        y = y-(r/2);
+        g.fillOval(x,y,r,r);
+    }
+
 
     @Override
     public void mouseClicked(MouseEvent e) {
-/*
-        int x = e.getX() >> 6;
-        int y = e.getY() >> 6;
-
-        if(board.colorActive == 1){
-            if(board.board[y][x] instanceof Tile.OccupiedTile && board.whitePieces.contains(board.board[y][x].pieceOnTile)){
-                this.highlightTile = new int[]{y,x};
-            }else{
-                this.highlightTile = null;
-            }
-        }else{
-            if(board.board[y][x] instanceof Tile.OccupiedTile && board.blackPieces.contains(board.board[y][x].pieceOnTile)){
-                this.highlightTile = new int[]{y,x};
-            }else{
-                this.highlightTile = null;
-            }
-        }
-
-        if(this.highlightTile !=null){
-            System.out.println("x= "+ highlightTile[1]+" y= "+ highlightTile[0]);
-        }else{
-            System.out.println("Non defined");
-        }
-
-        repaint();
-
- */
-
-
-
-
-
-        /*
-        if(this.startingCoordination == null){
-            this.startingCoordination = new int[]{y,x};
-            //System.out.println(startingCoordination[0] +" "+ startingCoordination[1]);
-        }else{
-            this.destinationCoordination = new int[]{y,x};
-            //tileChose = false;
-        }
-
-        if(startingCoordination != null){
-            //System.out.println(startingCoordination[0] +" "+ startingCoordination[1]);
-        }
-
-        if(destinationCoordination != null){
-            //System.out.println(destinationCoordination[0]+" "+destinationCoordination[1]);
-
-        }
-
-
-         */
-
-
-
     }
 
     @Override
@@ -283,8 +351,25 @@ public class Chessboard extends JComponent implements MouseListener {
             }
         }
 
+        dottedTiles = new LinkedList<>();
+
         if(this.highlightTile !=null){
             System.out.println("x= "+ highlightTile[1]+" y= "+ highlightTile[0]);
+            if(board.colorActive == 1){
+                for(Move move : board.whiteMoves){
+                    if(move.startingTile.tileCoordinate[0] == highlightTile[0] &&
+                            move.startingTile.tileCoordinate[1] == highlightTile[1]){
+                        dottedTiles.add(new Integer[]{move.destinationTile.tileCoordinate[0], move.destinationTile.tileCoordinate[1]});
+                    }
+                }
+            }else{
+                for(Move move : board.blackMoves){
+                    if(move.startingTile.tileCoordinate[0] == highlightTile[0] &&
+                            move.startingTile.tileCoordinate[1] == highlightTile[1]){
+                        dottedTiles.add(new Integer[]{move.destinationTile.tileCoordinate[0], move.destinationTile.tileCoordinate[1]});
+                    }
+                }
+            }
         }else{
             System.out.println("Non defined");
         }
@@ -306,6 +391,23 @@ public class Chessboard extends JComponent implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == timerAnimation){
+            //System.out.println("Timer reached");
+            if(xPiece != xGoal || yPiece != yGoal){
+                xPiece += xVelocity;
+                yPiece += yVelocity;
+                System.out.println("Timer reached " +xPiece + " " +yPiece);
+
+                repaint();
+            }else{
+                //this.isAnimating = false;
+            }
+
+        }
     }
 }
 
