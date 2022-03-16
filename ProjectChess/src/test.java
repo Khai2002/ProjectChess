@@ -1,37 +1,95 @@
 import board.*;
 
+import game.Engine;
+import game.Human;
+import game.Loop;
 import game.Player;
+import gui.Interface;
 import move.Move;
 import piece.*;
-import game.*;
-import java.util.*;
 
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class test {
     public static void main(String[] args) throws Exception {
-    
+
+
+
         Scanner sc= new Scanner(System.in);
         long avantTraitement = System.currentTimeMillis();
 
+        Board board = new Board(Board.startFEN);
+        //board.printBoard1();
 
-        Board board = new Board(Board.castle2FEN);
-        board.printBoard();
+        Engine mainEngine = new Engine(2);
+        int counter = mainEngine.buildNextSet(board);
+        System.out.println(counter);
+
+        board.nextBoardSet.last().printBoard1();
+        System.out.println(board.nextBoardSet.last().boardStateEvaluation);
+
+/*
+        Interface interFace = new Interface(board);
+
+        Human human1 = new Human();
+        Human human2 = new Human();
+        Engine engine1 = new Engine(3);
+        Engine engine2 = new Engine(3);
+
+        Loop loop = new Loop();
+        loop.gameLoopHumanMachine(board,interFace,human1,human2);
+
+/*
+        //loop.gameLoopInterfaceFinal(board, interFace);
 
         System.out.println(board.whiteMoves);
         System.out.println(board.blackMoves);
 
-        Loop loop = new Loop();
-        loop.gameLoop(board, sc);
+        Board newBoard = new Board(board,board.blackMoves.get(23),true);
+        newBoard.printBoard1();
+
+        Board newBoard2 = new Board(newBoard, newBoard.whiteMoves.get(15), true);
+        newBoard2.printBoard1();
+
+
+        System.out.println(board.whiteMoves);
+        System.out.println(board.blackMoves);
+
+        Board newBoard = new Board(board,board.blackMoves.get(1),true);
+        newBoard.printBoard1();
+        System.out.println(newBoard.whiteMoves);
+        System.out.println(newBoard.blackMoves);
+        System.out.println(newBoard.board[newBoard.whiteKingCoordinate[0]][newBoard.whiteKingCoordinate[1]].pieceOnTile instanceof King);
+        System.out.println(newBoard.board[newBoard.whiteKingCoordinate[0]][newBoard.whiteKingCoordinate[1]].pieceOnTile.moved);
+        for(boolean bool:newBoard.castleAvailable){
+            System.out.println(bool);
+        }
+
+
+        for(boolean bool:newBoard.castleCurrentAvailable){
+            System.out.println(bool);
+        }
+
+         */
+
+
+
+
+
+        //loop.gameLoopInterfaceFinal(board,interFace);
+
+
+        //loop.gameLoopInterface(board,interFace);
 
         //System.out.println(board.board[0][0].pieceOnTile.getClass().getName());
         //System.out.println(board.board[0][0].pieceOnTile instanceof Rook);
 
-        for(int i = 0; i<4; i++){System.out.println(board.castleAvailable[i]);}
+        //for(int i = 0; i<4; i++){System.out.println(board.castleAvailable[i]);}
 
-        for(int i = 0; i<4; i++){System.out.println(board.castleCurrentAvailable[i]);}
+        //for(int i = 0; i<4; i++){System.out.println(board.castleCurrentAvailable[i]);}
 
 
 

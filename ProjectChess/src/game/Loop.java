@@ -50,7 +50,11 @@ public class Loop {
         while (this.gameEnd(this.listBoard.get(count)) ==99) {
             if (this.listBoard.get(count).colorActive == 1) {
                 Board newBoard = this.listBoard.get(count);
-                newBoard.printBoard1();
+                System.out.println(newBoard.previousMove);
+                newBoard.printBoard();
+                System.out.println(newBoard.whiteMoves);
+                System.out.println(newBoard.blackMoves);
+
                 Move whitemove = new Move();
                 do {
                     System.out.println("Choose your white starting position: ");
@@ -74,7 +78,7 @@ public class Loop {
                     }
                 } while (whileCondition);
                 whileCondition = true;
-                this.listBoard.add(new Board(newBoard, whitemove, 0));
+                this.listBoard.add(new Board(newBoard, whitemove, true,0));
                 count++;
             }
 
@@ -85,7 +89,11 @@ public class Loop {
 
             if (this.listBoard.get(count).colorActive == -1) {
                 Board newBoard = this.listBoard.get(count);
+                System.out.println(newBoard.previousMove);
                 newBoard.printBoard1();
+                System.out.println(newBoard.whiteMoves);
+                System.out.println(newBoard.blackMoves);
+
                 Move blackmove = new Move();
                 do {
                     System.out.println("Choose your black starting position: ");
@@ -107,103 +115,14 @@ public class Loop {
                         }
                     }
                 } while (whileCondition);
-                this.listBoard.add(new Board(newBoard, blackmove, 0));
+                this.listBoard.add(new Board(newBoard, blackmove, true,0));
                 count++;
             }
 
         }
     }
+
     public void gameLoopInterface(Board board, Interface interFace){
-        this.listBoard.add(board);
-        int count = 0;
-        boolean whileCondition = true;
-
-
-        while (this.gameEnd(this.listBoard.get(count)) ==99) {
-
-            String sP = null;
-            String dP = null;
-            Tile startingPosition = null;
-            Tile destinationPosition = null;
-
-            if (this.listBoard.get(count).colorActive == 1) {
-                Board newBoard = this.listBoard.get(count);
-                newBoard.printBoard1();
-                Move whitemove = new Move();
-                do {
-                    if(interFace.buttonActivated){
-                        sP = interFace.startingInput;
-                        dP = interFace.destinationInput;
-                        startingPosition = getPosition(sP, newBoard);
-                        destinationPosition = getPosition(dP, newBoard);
-                    }
-
-
-                    if((startingPosition == null) || (destinationPosition == null) || startingPosition instanceof Tile.EmptyTile){
-                        System.out.print("");
-                        continue;
-                    }
-
-                    whitemove = new Move(startingPosition.pieceOnTile, startingPosition, destinationPosition);
-
-
-                    for (Move move: newBoard.whiteMoves){
-                        if (move.equals(whitemove)){
-                            whileCondition = false;
-                        }
-                    }
-                } while (whileCondition);
-                whileCondition = true;
-                this.listBoard.add(new Board(newBoard, whitemove, 0));
-                count++;
-                interFace.updateInterface(this.listBoard.get(count));
-            }
-
-            //System.out.println("Wow I got out");
-
-            if (this.gameEnd(this.listBoard.get(count)) !=99){
-                //System.out.println("End of the match");
-                break;
-            }
-
-            if (this.listBoard.get(count).colorActive == -1) {
-                //System.out.println("Hey guys Im here now");
-                Board newBoard = this.listBoard.get(count);
-                newBoard.printBoard1();
-                Move blackmove = new Move();
-                do {
-                    if(interFace.buttonActivated){
-                        sP = interFace.startingInput;
-                        dP = interFace.destinationInput;
-                        startingPosition = getPosition(sP, newBoard);
-                        destinationPosition = getPosition(dP, newBoard);
-                    }
-
-
-                    if((startingPosition == null) || (destinationPosition == null) || startingPosition instanceof Tile.EmptyTile){
-                        System.out.print("");
-                        continue;
-                    }
-
-                    blackmove = new Move(startingPosition.pieceOnTile, startingPosition, destinationPosition);
-
-                    for (Move move: newBoard.blackMoves){
-                        if (move.equals(blackmove)){
-                            whileCondition = false;
-                        }
-                    }
-                } while (whileCondition);
-                whileCondition = true;
-                this.listBoard.add(new Board(newBoard, blackmove, 0));
-                count++;
-                interFace.updateInterface(this.listBoard.get(count));
-            }
-
-        }
-
-    }
-
-    public void gameLoopInterfaceFinal(Board board, Interface interFace){
         this.listBoard.add(board);
 
         while(this.gameEnd(this.listBoard.get(this.listBoard.size()-1)) == 99){
@@ -213,112 +132,67 @@ public class Loop {
                 System.out.print("");
             }
 
-            this.listBoard.add(new Board(this.listBoard.get(this.listBoard.size()-1), interFace.chessBoard.definedMove,0));
+            this.listBoard.add(new Board(this.listBoard.get(this.listBoard.size()-1), interFace.chessBoard.definedMove,true,0));
             interFace.chessBoard.definedMove = null;
             interFace.updateInterface(this.listBoard.get(this.listBoard.size()-1));
         }
     }
 
-    public void gameLoopInterfaceTouch(Board board, Interface interFace){
+    public void gameLoopHumanMachine(Board board, Interface interFace, Player whitePlayer, Player blackPlayer) throws InterruptedException {
+
         this.listBoard.add(board);
-        int count = 0;
-        boolean whileCondition = true;
+        boolean isWhiteHuman;
+        boolean isBlackHuman;
 
-
-        while (this.gameEnd(this.listBoard.get(count)) ==99) {
-
-            Tile startingPosition = null;
-            Tile destinationPosition = null;
-
-            if (this.listBoard.get(count).colorActive == 1) {
-                Board newBoard = this.listBoard.get(count);
-                newBoard.printBoard1();
-                Move whitemove = new Move();
-                do {
-
-                    if((interFace.chessBoard.startingCoordination != null) && (interFace.chessBoard.destinationCoordination != null)){
-                        startingPosition = board.board[interFace.chessBoard.startingCoordination[0]][interFace.chessBoard.startingCoordination[1]];
-                        destinationPosition = board.board[interFace.chessBoard.destinationCoordination[0]][interFace.chessBoard.destinationCoordination[1]];
-                        interFace.chessBoard.resetChessboard();
-                    }
-
-
-                    if((startingPosition == null) || (destinationPosition == null) || startingPosition instanceof Tile.EmptyTile){
-                        System.out.print("");
-                        continue;
-                    }
-
-                    whitemove = new Move(startingPosition.pieceOnTile, startingPosition, destinationPosition);
-                    System.out.println(whitemove.toString());
-
-
-                    for (Move move: newBoard.whiteMoves){
-                        if (move.equals(whitemove)){
-                            whileCondition = false;
-                        }
-                    }
-
-
-
-                } while (whileCondition);
-
-                whileCondition = true;
-
-                this.listBoard.add(new Board(newBoard, whitemove, 0));
-                count++;
-
-                System.out.println("Hey Im alive");
-                interFace.updateInterface(this.listBoard.get(count));
-            }
-
-            //System.out.println("Wow I got out");
-
-            if (this.gameEnd(this.listBoard.get(count)) !=99){
-                //System.out.println("End of the match");
-                break;
-            }
-
-            if (this.listBoard.get(count).colorActive == -1) {
-                //System.out.println("Hey guys Im here now");
-                Board newBoard = this.listBoard.get(count);
-                newBoard.printBoard1();
-                Move blackmove = new Move();
-                do {
-
-                    if((interFace.chessBoard.startingCoordination != null) && (interFace.chessBoard.destinationCoordination != null)){
-                        startingPosition = board.board[interFace.chessBoard.startingCoordination[0]][interFace.chessBoard.startingCoordination[1]];
-                        destinationPosition = board.board[interFace.chessBoard.destinationCoordination[0]][interFace.chessBoard.destinationCoordination[1]];
-                        interFace.chessBoard.resetChessboard();
-                    }
-
-
-                    if((startingPosition == null) || (destinationPosition == null) || startingPosition instanceof Tile.EmptyTile){
-                        System.out.print("");
-                        continue;
-                    }
-
-                    blackmove = new Move(startingPosition.pieceOnTile, startingPosition, destinationPosition);
-                    System.out.println(blackmove.toString());
-
-                    for (Move move: newBoard.blackMoves){
-                        if (move.equals(blackmove)){
-                            whileCondition = false;
-                        }
-                    }
-
-                } while (whileCondition);
-
-                whileCondition = true;
-
-                this.listBoard.add(new Board(newBoard, blackmove, 0));
-                count++;
-
-                interFace.updateInterface(this.listBoard.get(count));
-            }
-
+        if(whitePlayer instanceof Engine){
+            isWhiteHuman = false;
+        }else{
+            isWhiteHuman = true;
         }
 
+        if(blackPlayer instanceof  Engine){
+            isBlackHuman = false;
+        }else{
+            isBlackHuman = true;
+        }
+
+        while(this.gameEnd(this.listBoard.get(this.listBoard.size()-1)) == 99){
+
+            int currentActiveColor = this.listBoard.get(this.listBoard.size()-1).colorActive;
+
+            if((currentActiveColor == 1 && isWhiteHuman) ||
+                    (currentActiveColor == -1 && isBlackHuman)){
+
+                while(interFace.chessBoard.definedMove == null){
+                    System.out.print("");
+                }
+
+                this.listBoard.add(new Board(this.listBoard.get(this.listBoard.size()-1), interFace.chessBoard.definedMove,true,0));
+                interFace.chessBoard.definedMove = null;
+
+            }else{
+
+                Move newMove;
+
+                if(currentActiveColor == 1){
+                    int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).whiteMoves.size()));
+                    newMove = this.listBoard.get(this.listBoard.size()-1).whiteMoves.get(randomChoice);
+                }else{
+                    int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).blackMoves.size()));
+                    newMove = this.listBoard.get(this.listBoard.size()-1).blackMoves.get(randomChoice);
+                }
+
+                Thread.sleep(50);
+                this.listBoard.add(new Board(this.listBoard.get(this.listBoard.size()-1), newMove,true,0));
+            }
+
+
+            interFace.updateInterface(this.listBoard.get(this.listBoard.size()-1));
+
+
+        }
     }
+
 
     // Anh dung 1 method check gameEnd
     // Co the cho no return int hoac boolean

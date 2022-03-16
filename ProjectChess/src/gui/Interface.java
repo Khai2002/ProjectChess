@@ -36,7 +36,7 @@ public class Interface extends JFrame implements ActionListener {
     }
 
     public Interface(Board board) throws IOException {
-        chessBoard = new Chessboard(board,1);
+        chessBoard = new Chessboard(board,0);
 
         //ChooseName chooseName1 = new ChooseName();
         //name1 = chooseName1.text.getText();
@@ -60,7 +60,7 @@ public class Interface extends JFrame implements ActionListener {
 
 
 
-        chessBoard.setBounds(50,55,640,640);
+        chessBoard.setBounds(50,55,512,512);
 
         button = new JButton();
         button.setText("Submit");

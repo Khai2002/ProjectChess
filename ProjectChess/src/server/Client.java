@@ -46,7 +46,7 @@ public class Client {
             }
             System.out.println("Your move is "+chosenMove);
 
-            Board sndBoard = new Board(newBoard,chosenMove,0);
+            Board sndBoard = new Board(newBoard,chosenMove,true,0);
             outputStream.writeObject(sndBoard);
         }
 

@@ -48,7 +48,7 @@ public class Server {
             System.out.println("Your move is "+chosenMove);
             System.out.println();
 
-            Board sndBoard = new Board(rcvBoard,chosenMove,0);
+            Board sndBoard = new Board(rcvBoard,chosenMove,true,0);
             outputStream.writeObject(sndBoard);
         }
 

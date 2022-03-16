@@ -6,7 +6,7 @@ import piece.*;
 import java.io.Serializable;
 import java.util.*;
 
-public class Board implements Serializable {
+public class Board implements Serializable, Comparable<Board> {
 
     // Global Attributes ===================================================== //
 
@@ -18,13 +18,13 @@ public class Board implements Serializable {
     public static final String startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final String testFEN = "8/8/8/6rk/6P1/6P1/8/8 b KQkq - 0 1";
     public static final String test2FEN = "1r2kr2/pp1p1p2/2p4p/6pP/P1PP4/1P6/5PP1/R3K2R w KQ g6 0 21";
-    public static final String failSaveFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String failSaveFEN = "nnnnnnnn/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final String checkmateFEN = "7Q/6R1/8/7k/8/8/8/8 b - - 0 1";
     public static final String stalemateFEN = "8/8/q7/4K3/7q/8/8/3q1q2 w - - 0 1";
     public static final String weirdPositionFEN = "8/8/1R6/7K/8/8/1r6/1k4r1 b - - 0 1";
     public static final String pawnDebugFEN = "8/6p1/8/8/8/8/1P6/8 w - - 0 1";
-    public static final String castleFEN = "2qn1n2/8/8/8/8/8/8/R3K1NR w KQ - 0 1";
-    public static final String castle2FEN = "r3k2r/8/8/8/8/8/8/3Q4 w kq - 0 1";
+    public static final String castleFEN = "rn1qk2r/pppppppp/5n2/8/8/8/P6P/R2QK2R b KQkq - 0 1";
+    public static final String castle2FEN = "r3k2r/p6p/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     // Local Attributes ====================================================== //
 
@@ -64,8 +64,13 @@ public class Board implements Serializable {
 
     public boolean[] castleCurrentAvailable = new boolean[4];
 
-    // Attribute used for search depth
+    public boolean eliminateMove;
+
+    // Attributes for engine
     public int searchDepth;
+    public double boardStateEvaluation;
+    public double treeStateEvaluation;
+    public TreeSet<Board> nextBoardSet = new TreeSet<>();
 
 
     // Constructors ========================================================== //
@@ -74,11 +79,13 @@ public class Board implements Serializable {
     public Board(String fen){
 
         try{
+            this.eliminateMove = true;
             this.searchDepth = 0;
             this.fen = fen;
             this.fenToBoard(this.fen);
         }catch (Exception e){
             System.out.println("FEN code not compatible");
+            this.eliminateMove = true;
             this.searchDepth = 0;
             this.fen = failSaveFEN;
             this.fenToBoard(this.fen);
@@ -95,7 +102,7 @@ public class Board implements Serializable {
             this.isWhiteInCheck = this.isInCheck(1);
             this.isBlackInCheck = this.isInCheck(-1);
 
-            if(this.searchDepth == 0){
+            if(this.eliminateMove){
                 limitMoveResultInCheck(this.colorActive);
                 //limitMoveResultInCheck(-1);
             }
@@ -108,13 +115,16 @@ public class Board implements Serializable {
 
             this.checkCastleAvailable(1);
             this.checkCastleAvailable(-1);
+
+            this.boardStateEvaluation = this.calculateValue();
         }
 
 
     }
 
     // Initialise Board using previous Board and a transition Move
-    public Board(Board previousBoard, Move move, int searchDepth){
+    public Board(Board previousBoard, Move move, boolean eliminateMove, int searchDepth){
+        this.eliminateMove = eliminateMove;
         this.searchDepth = searchDepth;
 
         this.previousBoard = previousBoard;
@@ -126,6 +136,10 @@ public class Board implements Serializable {
             this.fullMoveCounter ++;
         }
 
+        // Reinitialize castle possibility
+        this.castleAvailable = previousBoard.castleCurrentAvailable;
+
+        // ReCreating Board
 
         this.board = new Tile[8][8];
         for(int i = 0; i<8; i++){
@@ -134,57 +148,32 @@ public class Board implements Serializable {
             }
         }
 
+        // Move Piece if move type is 0
+
         int[] startCoordinate = move.startingTile.tileCoordinate;
         int[] destinationCoordinate = move.destinationTile.tileCoordinate;
 
-
-        Piece temp = null;
         int currentId = move.piece.id;
-
-        if(Math.abs(currentId)==1){
-            if(currentId>0){
-                temp = new Pawn(destinationCoordinate, 1, true);
-            }else {
-                temp = new Pawn(destinationCoordinate, -1, true);
-            }
-        }else if(Math.abs(currentId)==2){
-            if(currentId>0){
-                temp = new Rook(destinationCoordinate, 1, true);
-            }else {
-                temp = new Rook(destinationCoordinate, -1, true);
-            }
-        }else if(Math.abs(currentId)==3){
-            if(currentId>0){
-                temp = new Knight(destinationCoordinate, 1);
-            }else {
-                temp = new Knight(destinationCoordinate, -1);
-            }
-        }else if(Math.abs(currentId)==4){
-            if(currentId>0){
-                temp = new Bishop(destinationCoordinate, 1);
-            }else {
-                temp = new Bishop(destinationCoordinate, -1);
-            }
-        }else if(Math.abs(currentId)==5){
-            if(currentId>0){
-                temp = new Queen(destinationCoordinate, 1);
-            }else {
-                temp = new Queen(destinationCoordinate, -1);
-            }
-        }else if(Math.abs(currentId)==6){
-            if(currentId>0){
-                temp = new King(destinationCoordinate, 1, true);
-                this.castleAvailable[0] = false;
-                this.castleAvailable[1] = false;
-            }else {
-                temp = new King(destinationCoordinate, -1, true);
-                this.castleAvailable[2] = false;
-                this.castleAvailable[3] = false;
-            }
-        }
+        Piece temp = this.assignPiece(destinationCoordinate, move.piece.id);
 
         this.board[startCoordinate[0]][startCoordinate[1]] = new Tile.EmptyTile(startCoordinate);
         this.board[destinationCoordinate[0]][destinationCoordinate[1]] = new Tile.OccupiedTile(destinationCoordinate,temp);
+
+
+        // Move additional Piece if move type is 2
+
+        if(move.type == 2){
+            startCoordinate = move.affectedStartingTile.tileCoordinate;
+            destinationCoordinate = move.affectedDestinationTile.tileCoordinate;
+
+            currentId = move.affectedPiece.id;
+            temp = this.assignPiece(destinationCoordinate, move.affectedPiece.id);
+
+            this.board[startCoordinate[0]][startCoordinate[1]] = new Tile.EmptyTile(startCoordinate);
+            this.board[destinationCoordinate[0]][destinationCoordinate[1]] = new Tile.OccupiedTile(destinationCoordinate,temp);
+        }
+
+
 
         this.whitePieces = this.getPiece(1);
         this.blackPieces = this.getPiece(-1);
@@ -213,7 +202,7 @@ public class Board implements Serializable {
         this.isWhiteInCheck = this.isInCheck(1);
         this.isBlackInCheck = this.isInCheck(-1);
 
-        if(this.searchDepth == 0){
+        if(this.eliminateMove){
             limitMoveResultInCheck(this.colorActive);
             //limitMoveResultInCheck(-1);
         }
@@ -227,6 +216,8 @@ public class Board implements Serializable {
 
         this.checkCastleAvailable(1);
         this.checkCastleAvailable(-1);
+
+        this.boardStateEvaluation = this.calculateValue();
 
 
     }
@@ -302,6 +293,56 @@ public class Board implements Serializable {
         return false;
     }
 
+    // Assign Piece
+    public Piece assignPiece(int[] destinationCoordinate, int currentId){
+
+        Piece temp = null;
+
+        if(Math.abs(currentId)==1){
+            if(currentId>0){
+                temp = new Pawn(destinationCoordinate, 1, true);
+            }else {
+                temp = new Pawn(destinationCoordinate, -1, true);
+            }
+        }else if(Math.abs(currentId)==2){
+            if(currentId>0){
+                temp = new Rook(destinationCoordinate, 1, true);
+            }else {
+                temp = new Rook(destinationCoordinate, -1, true);
+            }
+        }else if(Math.abs(currentId)==3){
+            if(currentId>0){
+                temp = new Knight(destinationCoordinate, 1);
+            }else {
+                temp = new Knight(destinationCoordinate, -1);
+            }
+        }else if(Math.abs(currentId)==4){
+            if(currentId>0){
+                temp = new Bishop(destinationCoordinate, 1);
+            }else {
+                temp = new Bishop(destinationCoordinate, -1);
+            }
+        }else if(Math.abs(currentId)==5){
+            if(currentId>0){
+                temp = new Queen(destinationCoordinate, 1);
+            }else {
+                temp = new Queen(destinationCoordinate, -1);
+            }
+        }else if(Math.abs(currentId)==6){
+            if(currentId>0){
+                temp = new King(destinationCoordinate, 1, true);
+                this.castleAvailable[0] = false;
+                this.castleAvailable[1] = false;
+            }else {
+                temp = new King(destinationCoordinate, -1, true);
+                this.castleAvailable[2] = false;
+                this.castleAvailable[3] = false;
+            }
+        }
+
+        return temp;
+    }
+
     // Verify if a move can lead to king being checked
     public void limitMoveResultInCheck(int color){
 
@@ -311,7 +352,7 @@ public class Board implements Serializable {
             //System.out.println("Hello I'm white");
             for(Move move:whiteMoves){
                 if(!Arrays.equals(move.destinationTile.tileCoordinate,blackKingCoordinate)){
-                    Board newBoard = new Board(this,move,1);
+                    Board newBoard = new Board(this,move,false,0);
                     if(newBoard.isWhiteInCheck){
                         //System.out.println("Hey");
                         moveToDelete.add(move);
@@ -330,7 +371,7 @@ public class Board implements Serializable {
             //System.out.println("Hello I'm black");
             for(Move move:blackMoves){
                 if(!Arrays.equals(move.destinationTile.tileCoordinate,whiteKingCoordinate)){
-                    Board newBoard = new Board(this,move,1);
+                    Board newBoard = new Board(this,move,false,0);
                     //newBoard.printBoard();
                     //System.out.println(newBoard.whiteMoves);
                     //System.out.println(newBoard.isBlackInCheck);
@@ -378,96 +419,126 @@ public class Board implements Serializable {
             row = 7;
             if(this.castleAvailable[0]){
                 this.castleCurrentAvailable[0] = true;
-                for(int i = 5; i<7; i++){
-                    tileInDanger = false;
-                    for(Move move:this.blackMoves){
-                        if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
-                            //System.out.println(move);
-                            tileInDanger = true;
-                        }
-                    }
-                    if(!(this.board[row][i] instanceof Tile.EmptyTile) || tileInDanger){
-                        this.castleCurrentAvailable[0] = false;
-                    }
-                }
             }else{
                 this.castleCurrentAvailable[0] = false;
             }
 
             if(this.castleAvailable[1]){
                 this.castleCurrentAvailable[1] = true;
-                for(int i = 1; i<4; i++){
-                    tileInDanger = false;
-                    for(Move move:this.blackMoves){
-                        if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
-                            //System.out.println(move);
-                            tileInDanger = true;
-                        }
-                    }
-                    if(!(this.board[row][i] instanceof Tile.EmptyTile) || tileInDanger){
-                        this.castleCurrentAvailable[1] = false;
-                    }
-                }
             }else{
                 this.castleCurrentAvailable[1] = false;
             }
 
-            if(this.castleCurrentAvailable[0]){
+            if(this.castleAvailable[0]){
                 Move newMove = new Move(board[7][4].pieceOnTile, board[7][7].pieceOnTile,board[7][4], board[7][6], board[7][7], board[7][5]);
-                this.whiteMoves.add(newMove);
+
+                boolean checker = true;
+                for(int i = 5; i<7; i++){
+                    if(this.board[row][i] instanceof Tile.OccupiedTile){
+                        checker = false;
+                        break;
+                    }
+                    if((newMove.startingTile.tileCoordinate[1] - i)*(newMove.destinationTile.tileCoordinate[1]-i) < 0){
+                        for(Move move:this.blackMoves){
+                            if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
+                                checker = false;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+
+                if(checker){
+                    this.whiteMoves.add(newMove);
+                }
             }
 
-            if(this.castleCurrentAvailable[1]){
+            if(this.castleAvailable[1]){
                 Move newMove = new Move(board[7][4].pieceOnTile, board[7][0].pieceOnTile,board[7][4], board[7][2], board[7][0], board[7][3]);
-                this.whiteMoves.add(newMove);
+                boolean checker = true;
+                for(int i = 1; i<4; i++){
+                    if(this.board[row][i] instanceof Tile.OccupiedTile){
+                        checker = false;
+                        break;
+                    }
+
+                    if((newMove.startingTile.tileCoordinate[1] - i)*(newMove.destinationTile.tileCoordinate[1]-i) < 0){
+                        for(Move move:this.blackMoves){
+                            if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
+                                checker = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if(checker){
+                    this.whiteMoves.add(newMove);
+                }
             }
 
         }else{
             row = 0;
             if(this.castleAvailable[2]){
                 this.castleCurrentAvailable[2] = true;
-                for(int i = 5; i<7; i++){
-                    tileInDanger = false;
-                    for(Move move:this.whiteMoves){
-                        if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
-                            //System.out.println(move);
-                            tileInDanger = true;
-                        }
-                    }
-                    if(!(this.board[row][i] instanceof Tile.EmptyTile) || tileInDanger){
-                        this.castleCurrentAvailable[2] = false;
-                    }
-                }
             }else{
                 this.castleCurrentAvailable[2] = false;
             }
 
             if(this.castleAvailable[3]){
                 this.castleCurrentAvailable[3] = true;
-                for(int i = 1; i<4; i++){
-                    tileInDanger = false;
-                    for(Move move:this.whiteMoves){
-                        if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
-                            //System.out.println(move);
-                            tileInDanger = true;
-                        }
-                    }
-                    if(!(this.board[row][i] instanceof Tile.EmptyTile) || tileInDanger){
-                        this.castleCurrentAvailable[3] = false;
-                    }
-                }
             }else{
                 this.castleCurrentAvailable[3] = false;
             }
 
-            if(this.castleCurrentAvailable[2]){
+            if(this.castleAvailable[2]){
                 Move newMove = new Move(board[0][4].pieceOnTile, board[0][7].pieceOnTile,board[0][4], board[0][6], board[0][7], board[0][5]);
-                this.blackMoves.add(newMove);
+                boolean checker = true;
+                for(int i = 5; i<7; i++){
+                    if(this.board[row][i] instanceof Tile.OccupiedTile){
+                        checker = false;
+                        break;
+                    }
+
+                    if((newMove.startingTile.tileCoordinate[1] - i)*(newMove.destinationTile.tileCoordinate[1]-i) < 0){
+                        for(Move move:this.whiteMoves){
+                            if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
+                                checker = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if(checker){
+                    this.blackMoves.add(newMove);
+                }
             }
 
-            if(this.castleCurrentAvailable[3]){
+            if(this.castleAvailable[3]){
                 Move newMove = new Move(board[0][4].pieceOnTile, board[0][0].pieceOnTile,board[0][4], board[0][2], board[0][0], board[0][3]);
-                this.blackMoves.add(newMove);
+
+                boolean checker = true;
+                for(int i = 1; i<4; i++){
+                    if(this.board[row][i] instanceof Tile.OccupiedTile){
+                        checker = false;
+                        break;
+                    }
+
+                    if((newMove.startingTile.tileCoordinate[1] - i)*(newMove.destinationTile.tileCoordinate[1]-i) < 0){
+                        for(Move move:this.whiteMoves){
+                            if(move.destinationTile.tileCoordinate[0] == row && move.destinationTile.tileCoordinate[1] == i){
+                                checker = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if(checker){
+                    this.blackMoves.add(newMove);
+                }
             }
         }
 
@@ -680,6 +751,20 @@ public class Board implements Serializable {
         return fenCode.toString();
     }
 
+    public double calculateValue(){
+        int return_value = 0;
+
+        for(Piece piece:whitePieces){
+            return_value += piece.value;
+        }
+
+        for(Piece piece:blackPieces){
+            return_value -= piece.value;
+        }
+
+        return return_value + Math.random();
+    }
+
     // Print out chess board
     public void printBoard(){
         for(int i = 0; i<8; i++){
@@ -711,5 +796,17 @@ public class Board implements Serializable {
             System.out.println();
         }
         System.out.println("  a b c d e f g h");
+    }
+
+    @Override
+    public int compareTo(Board b) {
+
+        if(this.boardStateEvaluation > b.boardStateEvaluation){
+            return 1;
+        }else if(this.boardStateEvaluation < b.boardStateEvaluation){
+            return -1;
+        }else{
+            return 0;
+        }
     }
 }

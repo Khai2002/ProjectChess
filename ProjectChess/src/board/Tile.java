@@ -27,4 +27,8 @@ public class Tile implements Serializable {
             this.pieceOnTile = pieceOnTile;
         }
     }
+
+    public boolean equals(Tile tile){
+        return (this.tileCoordinate[0] == tile.tileCoordinate[0]) && (this.tileCoordinate[1] == tile.tileCoordinate[1]);
+    }
 }
