@@ -19,8 +19,7 @@ public class TaskBar extends JPanel {
         this.add(panel);
 
         panel = new JLabel();
-        panel.setForeground(Color.white);
-        panel.setFont(new Font("Comic Sans",Font.BOLD,12));
+
 
 
     }
