@@ -67,18 +67,21 @@ public class Pawn extends Piece{
             move[0] = this.color*move[0];
             move[1] = this.color*move[1];
 
-            if(checkValidMove(this.position, move,1, board.board) == 1){
-                listMove.add(new Move(this, board.board[xCoordinate][yCoordinate],board.board[xCoordinate+move[0]][yCoordinate+move[1]]));
+            if(checkValidMove(this.position, move,1, board.board) == 1) {
+                listMove.add(new Move(this, board.board[xCoordinate][yCoordinate], board.board[xCoordinate + move[0]][yCoordinate + move[1]]));
+            }else if(!(board.enPassantTileCoordinate == null) &&
+                board.enPassantTileCoordinate[0] == this.position[0] + move[0] &&
+                board.enPassantTileCoordinate[1] == this.position[1] + move[1]){
+
+            listMove.add(new Move(this, board.board[this.position[0]][this.position[1] + move[1]].pieceOnTile, board.board[xCoordinate][yCoordinate],
+                    board.board[this.position[0]+move[0]][this.position[1]+move[1]]));
+
+            if(board.eliminateMove){
+                System.out.println("solved the problem" + board.board[this.position[0]][this.position[1] + move[1]].pieceOnTile);
+            }
+
             }
         }
-
-
-
-        // Check for en passant
-
-
-
-
     }
 
 

@@ -25,6 +25,7 @@ public class Board implements Serializable, Comparable<Board> {
     public static final String pawnDebugFEN = "8/6p1/8/8/8/8/1P6/8 w - - 0 1";
     public static final String castleFEN = "rn1qk2r/pppppppp/5n2/8/8/8/P6P/R2QK2R b KQkq - 0 1";
     public static final String castle2FEN = "r3k2r/p6p/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    public static final String enPassantInitFEN = "1r2kr2/pp1p1pp1/2p4p/7P/P1PP4/1P6/5PP1/R3K2R b KQ - 0 20";
 
     // Local Attributes ====================================================== //
 
@@ -127,8 +128,26 @@ public class Board implements Serializable, Comparable<Board> {
         this.eliminateMove = eliminateMove;
         this.searchDepth = searchDepth;
 
+        // Previous state of Board and Move
         this.previousBoard = previousBoard;
         this.previousMove = move;
+        if(eliminateMove){
+            System.out.println(this.previousMove.type);
+        }
+
+        // Creating En Passant Square
+        if(this.previousMove.piece instanceof Pawn &&
+                Math.abs(this.previousMove.destinationTile.tileCoordinate[0] - this.previousMove.startingTile.tileCoordinate[0]) == 2 &&
+                this.eliminateMove){
+
+            this.enPassantTileCoordinate =  new int[2];
+            this.enPassantTileCoordinate[0] = (this.previousMove.destinationTile.tileCoordinate[0] + this.previousMove.startingTile.tileCoordinate[0])/2;
+            this.enPassantTileCoordinate[1] = this.previousMove.startingTile.tileCoordinate[1];
+
+            System.out.println("We got en passant square of " + this.enPassantTileCoordinate[0] + " " + this.enPassantTileCoordinate[1]);
+
+        }
+
 
         this.colorActive = this.previousBoard.colorActive * (-1);
 
@@ -158,6 +177,14 @@ public class Board implements Serializable, Comparable<Board> {
 
         this.board[startCoordinate[0]][startCoordinate[1]] = new Tile.EmptyTile(startCoordinate);
         this.board[destinationCoordinate[0]][destinationCoordinate[1]] = new Tile.OccupiedTile(destinationCoordinate,temp);
+
+
+        // Delete Pawn if move type is 1
+        if(move.type == 1){
+            this.board[move.affectedPiece.position[0]][move.affectedPiece.position[1]] = new Tile.EmptyTile(move.affectedPiece.position);
+            System.out.println("Oh yeah" + this.previousMove.affectedPiece.position[0] + this.previousMove.affectedPiece.position[1]);
+            this.board[move.affectedPiece.position[0]][move.affectedPiece.position[1]] = new Tile.EmptyTile(move.affectedPiece.position);
+        }
 
 
         // Move additional Piece if move type is 2
@@ -218,6 +245,50 @@ public class Board implements Serializable, Comparable<Board> {
         this.checkCastleAvailable(-1);
 
         this.boardStateEvaluation = this.calculateValue();
+
+        // Add en passant move if exist
+        ArrayList<Integer> enPassantColumn = new ArrayList<>();
+
+        if(this.enPassantTileCoordinate!=null){
+
+            if(this.previousMove.destinationTile.tileCoordinate[1]-1>=0){
+                enPassantColumn.add(this.previousMove.destinationTile.tileCoordinate[1]-1);
+            }
+
+            if(this.previousMove.destinationTile.tileCoordinate[1]+1<8){
+                enPassantColumn.add(this.previousMove.destinationTile.tileCoordinate[1]+1);
+            }
+
+            if(this.eliminateMove){
+                System.out.println(enPassantColumn);
+            }
+        }
+
+//        for(int column : enPassantColumn){
+//            if(this.board[this.previousMove.destinationTile.tileCoordinate[0]][column] instanceof Tile.OccupiedTile &&
+//                    this.board[this.previousMove.destinationTile.tileCoordinate[0]][column].pieceOnTile.id == this.colorActive){
+//
+//                if(this.colorActive == 1){
+//
+//                    Move newMove = new Move(this.board[this.previousMove.destinationTile.tileCoordinate[0]][column].pieceOnTile,
+//                            this.board[this.previousMove.destinationTile.tileCoordinate[0]][this.previousMove.destinationTile.tileCoordinate[1]].pieceOnTile,
+//                            this.board[this.previousMove.destinationTile.tileCoordinate[0]][column],this.board[this.enPassantTileCoordinate[0]][this.enPassantTileCoordinate[1]]);
+//                    System.out.println(newMove.type);
+//                    this.whiteMoves.add(newMove);
+//                    System.out.println( this.board[this.previousMove.destinationTile.tileCoordinate[0]][this.previousMove.destinationTile.tileCoordinate[1]].pieceOnTile);
+//
+//                }else if(this.colorActive == -1){
+//
+//                    Move newMove = new Move(this.board[this.previousMove.destinationTile.tileCoordinate[0]][column].pieceOnTile,
+//                            this.board[this.previousMove.destinationTile.tileCoordinate[0]][this.previousMove.destinationTile.tileCoordinate[1]].pieceOnTile,
+//                            this.board[this.previousMove.destinationTile.tileCoordinate[0]][column],this.board[this.enPassantTileCoordinate[0]][this.enPassantTileCoordinate[1]]);
+//                    System.out.println(newMove.type);
+//                    this.blackMoves.add(newMove);
+//                    System.out.println( this.board[this.previousMove.destinationTile.tileCoordinate[0]][this.previousMove.destinationTile.tileCoordinate[1]].pieceOnTile);
+//                }
+//
+//            }
+//        }
 
 
     }

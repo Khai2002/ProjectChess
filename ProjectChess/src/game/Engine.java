@@ -24,16 +24,12 @@ public class Engine extends Player{
             if(board.colorActive ==1){
                 for(Move move: board.whiteMoves){
                     Board newBoard = new Board(board, move, true, board.searchDepth + 1);
-                    //newBoard.printBoard1();
-                    //System.out.println(newBoard.boardStateEvaluation);
                     board.nextBoardSet.add(newBoard);
                     counter ++;
                 }
             }else{
                 for(Move move: board.blackMoves){
                     Board newBoard = new Board(board, move, true, board.searchDepth + 1);
-                    //newBoard.printBoard1();
-                    //System.out.println(newBoard.boardStateEvaluation);
                     board.nextBoardSet.add(newBoard);
                     counter ++;
                 }

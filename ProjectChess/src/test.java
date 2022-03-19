@@ -22,8 +22,59 @@ public class test {
         long avantTraitement = System.currentTimeMillis();
 
         Board board = new Board(Board.startFEN);
-        //board.printBoard1();
 
+        Interface interFace = new Interface(board);
+
+        Human human1 = new Human();
+        Human human2 = new Human();
+        //Engine engine1 = new Engine(3);
+        //Engine engine2 = new Engine(3);
+
+        Loop loop = new Loop();
+        loop.gameLoopHumanMachine(board,interFace,human1,human2);
+
+//        board.printBoard();
+//
+//        Move move = new Move(board.board[1][6].pieceOnTile, board.board[1][6], board.board[3][6]);
+//
+//        Board newBoard = new Board(board, move,true,0);
+//        newBoard.printBoard();
+//
+//        System.out.println(newBoard.enPassantTileCoordinate[0] + " "+ newBoard.enPassantTileCoordinate[1]);
+//
+//        Move move2 = new Move(newBoard.board[3][7].pieceOnTile, newBoard.board[newBoard.previousMove.destinationTile.tileCoordinate[0]][newBoard.previousMove.destinationTile.tileCoordinate[1]].pieceOnTile,newBoard.board[3][7], newBoard.board[2][6]);
+//        System.out.println(move2.type);
+//
+//        Board anotherNewBoard = new Board(newBoard, move2,true,0);
+//        anotherNewBoard.printBoard();
+//
+//        board.board[3][7].pieceOnTile.generateMove(board);
+//
+//        for(Move m : board.board[3][7].pieceOnTile.listMove){
+//            System.out.println(m);
+//        }
+
+
+
+
+
+/*
+        Engine mainEngine = new Engine(3);
+        int counter = mainEngine.buildNextSet(board);
+        System.out.println(counter);
+
+        /*
+        Interface interFace = new Interface(board);
+
+        Human human1 = new Human();
+        Human human2 = new Human();
+        Engine engine1 = new Engine(3);
+        Engine engine2 = new Engine(3);
+
+        Loop loop = new Loop();
+        loop.gameLoopHumanMachine(board,interFace,human1,human2);
+
+        /*
         Engine mainEngine = new Engine(2);
         int counter = mainEngine.buildNextSet(board);
         System.out.println(counter);
