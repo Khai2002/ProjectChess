@@ -27,11 +27,26 @@ public class test {
 
         Human human1 = new Human();
         Human human2 = new Human();
-        //Engine engine1 = new Engine(3);
-        //Engine engine2 = new Engine(3);
+        Engine engine1 = new Engine(3);
+        Engine engine2 = new Engine(3);
 
         Loop loop = new Loop();
         loop.gameLoopHumanMachine(board,interFace,human1,human2);
+
+//        board.printBoard();
+//
+//        System.out.println(board.board[1][1].pieceOnTile.id);
+//
+//        board.board[1][1].pieceOnTile.generateMove(board);
+//
+//        System.out.println(board.board[1][1].pieceOnTile.listMove);
+//
+//
+//        System.out.println(board.whiteMoves);
+
+
+
+
 
 //        board.printBoard();
 //

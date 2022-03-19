@@ -26,6 +26,7 @@ public class Board implements Serializable, Comparable<Board> {
     public static final String castleFEN = "rn1qk2r/pppppppp/5n2/8/8/8/P6P/R2QK2R b KQkq - 0 1";
     public static final String castle2FEN = "r3k2r/p6p/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final String enPassantInitFEN = "1r2kr2/pp1p1pp1/2p4p/7P/P1PP4/1P6/5PP1/R3K2R b KQ - 0 20";
+    public static final String promotionFEN = "r1bqkbnr/pPpppppp/8/8/8/8/8/4K3 w kq - 0 1";
 
     // Local Attributes ====================================================== //
 
@@ -172,8 +173,18 @@ public class Board implements Serializable, Comparable<Board> {
         int[] startCoordinate = move.startingTile.tileCoordinate;
         int[] destinationCoordinate = move.destinationTile.tileCoordinate;
 
-        int currentId = move.piece.id;
-        Piece temp = this.assignPiece(destinationCoordinate, move.piece.id);
+        int currentId;
+        Piece temp;
+
+        if (move.type == 3) {
+            currentId = move.transformedPieceId;
+            temp = this.assignPiece(destinationCoordinate, currentId);
+        }else{
+            currentId = move.piece.id;
+            temp = this.assignPiece(destinationCoordinate, move.piece.id);
+        }
+
+
 
         this.board[startCoordinate[0]][startCoordinate[1]] = new Tile.EmptyTile(startCoordinate);
         this.board[destinationCoordinate[0]][destinationCoordinate[1]] = new Tile.OccupiedTile(destinationCoordinate,temp);
@@ -199,6 +210,8 @@ public class Board implements Serializable, Comparable<Board> {
             this.board[startCoordinate[0]][startCoordinate[1]] = new Tile.EmptyTile(startCoordinate);
             this.board[destinationCoordinate[0]][destinationCoordinate[1]] = new Tile.OccupiedTile(destinationCoordinate,temp);
         }
+
+
 
 
 
@@ -246,49 +259,7 @@ public class Board implements Serializable, Comparable<Board> {
 
         this.boardStateEvaluation = this.calculateValue();
 
-        // Add en passant move if exist
-        ArrayList<Integer> enPassantColumn = new ArrayList<>();
 
-        if(this.enPassantTileCoordinate!=null){
-
-            if(this.previousMove.destinationTile.tileCoordinate[1]-1>=0){
-                enPassantColumn.add(this.previousMove.destinationTile.tileCoordinate[1]-1);
-            }
-
-            if(this.previousMove.destinationTile.tileCoordinate[1]+1<8){
-                enPassantColumn.add(this.previousMove.destinationTile.tileCoordinate[1]+1);
-            }
-
-            if(this.eliminateMove){
-                System.out.println(enPassantColumn);
-            }
-        }
-
-//        for(int column : enPassantColumn){
-//            if(this.board[this.previousMove.destinationTile.tileCoordinate[0]][column] instanceof Tile.OccupiedTile &&
-//                    this.board[this.previousMove.destinationTile.tileCoordinate[0]][column].pieceOnTile.id == this.colorActive){
-//
-//                if(this.colorActive == 1){
-//
-//                    Move newMove = new Move(this.board[this.previousMove.destinationTile.tileCoordinate[0]][column].pieceOnTile,
-//                            this.board[this.previousMove.destinationTile.tileCoordinate[0]][this.previousMove.destinationTile.tileCoordinate[1]].pieceOnTile,
-//                            this.board[this.previousMove.destinationTile.tileCoordinate[0]][column],this.board[this.enPassantTileCoordinate[0]][this.enPassantTileCoordinate[1]]);
-//                    System.out.println(newMove.type);
-//                    this.whiteMoves.add(newMove);
-//                    System.out.println( this.board[this.previousMove.destinationTile.tileCoordinate[0]][this.previousMove.destinationTile.tileCoordinate[1]].pieceOnTile);
-//
-//                }else if(this.colorActive == -1){
-//
-//                    Move newMove = new Move(this.board[this.previousMove.destinationTile.tileCoordinate[0]][column].pieceOnTile,
-//                            this.board[this.previousMove.destinationTile.tileCoordinate[0]][this.previousMove.destinationTile.tileCoordinate[1]].pieceOnTile,
-//                            this.board[this.previousMove.destinationTile.tileCoordinate[0]][column],this.board[this.enPassantTileCoordinate[0]][this.enPassantTileCoordinate[1]]);
-//                    System.out.println(newMove.type);
-//                    this.blackMoves.add(newMove);
-//                    System.out.println( this.board[this.previousMove.destinationTile.tileCoordinate[0]][this.previousMove.destinationTile.tileCoordinate[1]].pieceOnTile);
-//                }
-//
-//            }
-//        }
 
 
     }

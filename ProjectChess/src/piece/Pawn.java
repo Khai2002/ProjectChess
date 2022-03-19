@@ -52,9 +52,35 @@ public class Pawn extends Piece{
         int yCoordinate = this.position[1];
         // Check if pawn can move forward 1 tile
 
+        boolean isPromotion = false;
+        if(this.color == 1){
+            if(xCoordinate == 1){
+                isPromotion = true;
+            }
+        }else{
+            if(xCoordinate == 6){
+                isPromotion = true;
+            }
+        }
+
+
 
         if(xCoordinate-this.color>=0 && xCoordinate-this.color<8 && board.board[xCoordinate-this.color][yCoordinate] instanceof Tile.EmptyTile){
-            listMove.add(new Move(this,board.board[xCoordinate][yCoordinate],board.board[xCoordinate-this.color][yCoordinate]));
+
+
+            //System.out.println("Hello Im here " + this.position[0]+ " " + this.position[1] + " "+ this.color);
+
+            if(isPromotion){
+                //System.out.println("About to promote");
+                listMove.add(new Move(this,2 ,board.board[xCoordinate][yCoordinate],board.board[xCoordinate-this.color][yCoordinate]));
+                listMove.add(new Move(this,3 ,board.board[xCoordinate][yCoordinate],board.board[xCoordinate-this.color][yCoordinate]));
+                listMove.add(new Move(this,4 ,board.board[xCoordinate][yCoordinate],board.board[xCoordinate-this.color][yCoordinate]));
+                listMove.add(new Move(this,5 ,board.board[xCoordinate][yCoordinate],board.board[xCoordinate-this.color][yCoordinate]));
+            }else{
+                listMove.add(new Move(this,board.board[xCoordinate][yCoordinate],board.board[xCoordinate-this.color][yCoordinate]));
+            }
+
+
 
             // Check if pawn can move forward 2 tiles
             if(!this.moved && board.board[xCoordinate-this.color*2][yCoordinate] instanceof Tile.EmptyTile){
@@ -68,7 +94,16 @@ public class Pawn extends Piece{
             move[1] = this.color*move[1];
 
             if(checkValidMove(this.position, move,1, board.board) == 1) {
-                listMove.add(new Move(this, board.board[xCoordinate][yCoordinate], board.board[xCoordinate + move[0]][yCoordinate + move[1]]));
+                if(isPromotion){
+                    listMove.add(new Move(this,2 ,board.board[xCoordinate][yCoordinate],board.board[xCoordinate + move[0]][yCoordinate + move[1]]));
+                    listMove.add(new Move(this,3 ,board.board[xCoordinate][yCoordinate],board.board[xCoordinate + move[0]][yCoordinate + move[1]]));
+                    listMove.add(new Move(this,4 ,board.board[xCoordinate][yCoordinate],board.board[xCoordinate + move[0]][yCoordinate + move[1]]));
+                    listMove.add(new Move(this,5 ,board.board[xCoordinate][yCoordinate],board.board[xCoordinate + move[0]][yCoordinate + move[1]]));
+                }else{
+                    listMove.add(new Move(this, board.board[xCoordinate][yCoordinate], board.board[xCoordinate + move[0]][yCoordinate + move[1]]));
+                }
+
+
             }else if(!(board.enPassantTileCoordinate == null) &&
                 board.enPassantTileCoordinate[0] == this.position[0] + move[0] &&
                 board.enPassantTileCoordinate[1] == this.position[1] + move[1]){
