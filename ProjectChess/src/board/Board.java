@@ -11,6 +11,7 @@ public class Board implements Serializable, Comparable<Board> {
     // Global Attributes ===================================================== //
 
     public static final Character[] COLUMN_NOTATION = {'a','b','c','d','e','f','g','h'};
+    public static final Character[] PIECE_NOTATION = {' ','R','N','B','Q','K'};
     public static final Character[] PIECE_PRINT = {'k','q','b','n','r','p','_','P','R','N','B','Q','K'};
     public static final Character[] ROW_NOTATION = {'1','2','3','4','5','6','7','8'};
 
@@ -27,13 +28,14 @@ public class Board implements Serializable, Comparable<Board> {
     public static final String castle2FEN = "r3k2r/p6p/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public static final String enPassantInitFEN = "1r2kr2/pp1p1pp1/2p4p/7P/P1PP4/1P6/5PP1/R3K2R b KQ - 0 20";
     public static final String promotionFEN = "r1bqkbnr/pPpppppp/8/8/8/8/8/4K3 w kq - 0 1";
-
+    public static final String ambitiousFEN = "rnbqkbnr/pppppppp/8/8/8/2N3N1/PPPPPPPP/R1BQKB1R w KQkq - 0 1";
     // Local Attributes ====================================================== //
 
 
     // Variables that connect board to a previous state
     public Board previousBoard;
     public Move previousMove;
+    public String notation;
 
     // Useful attributes to describe current state of a chess board
     public String fen;
@@ -128,7 +130,8 @@ public class Board implements Serializable, Comparable<Board> {
     public Board(Board previousBoard, Move move, boolean eliminateMove, int searchDepth){
         this.eliminateMove = eliminateMove;
         this.searchDepth = searchDepth;
-
+        move.board = previousBoard;
+        this.notation = getNotation();
         // Previous state of Board and Move
         this.previousBoard = previousBoard;
         this.previousMove = move;
@@ -265,6 +268,81 @@ public class Board implements Serializable, Comparable<Board> {
     }
 
     // Methods ============================================================== //
+
+
+    public String getNotation(){
+        String notation = "";
+        System.out.print("Tung1");
+        if(previousMove != null && previousBoard != null) {
+            System.out.print("Tung2");
+
+            // Normal notation
+            if (previousMove.type == 0) {
+                notation += Board.PIECE_NOTATION[Math.abs(previousMove.piece.id) - 1];
+                if (this.colorActive == 1 && board != null) {
+                    for (Move move : whiteMoves) {
+                        if (move.piece.id == previousMove.piece.id && move.destinationTile.equals(previousMove.destinationTile)) {
+                            if (move.startingTile.tileCoordinate[0] == previousMove.startingTile.tileCoordinate[0]) {
+                                notation += Board.ROW_NOTATION[7 - previousMove.startingTile.tileCoordinate[1]];
+                            }
+                            if (move.startingTile.tileCoordinate[1] == previousMove.startingTile.tileCoordinate[1]) {
+                                notation += Board.COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[0]];
+                            }
+                        }
+                    }
+                } else {
+                    for (Move move : blackMoves) {
+                        if (move.piece.id == previousMove.piece.id && move.destinationTile.equals(previousMove.destinationTile)) {
+                            if (move.startingTile.tileCoordinate[0] == previousMove.startingTile.tileCoordinate[0]) {
+                                notation += Board.ROW_NOTATION[8 - previousMove.startingTile.tileCoordinate[1]];
+                            }
+                            if (move.startingTile.tileCoordinate[1] == previousMove.startingTile.tileCoordinate[1]) {
+                                notation += Board.COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[0]];
+                            }
+                        }
+                    }
+                }
+
+                if (this.board != null) {
+                    if (this.board[previousMove.destinationTile.tileCoordinate[0]][previousMove.destinationTile.tileCoordinate[1]] instanceof Tile.OccupiedTile) {
+                        notation += 'x';
+                    }
+                }
+                notation += COLUMN_NOTATION[previousMove.destinationTile.tileCoordinate[1]];
+                notation += ROW_NOTATION[7 - previousMove.destinationTile.tileCoordinate[0]];
+
+
+            // Castle notation
+            } else if (previousMove.type == 1) {
+                if (previousMove.affectedPiece.position[1] > previousMove.piece.position[1]) {
+                    return "0-0";
+                } else {
+                    return "0-0-0";
+                }
+
+            // En passant notation
+            } else if (previousMove.type == 2) {
+                notation += COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[1]] + "x" + COLUMN_NOTATION[previousMove.destinationTile.tileCoordinate[1]] + ROW_NOTATION[7 - previousMove.destinationTile.tileCoordinate[0]];
+
+            // Promotion notation
+            } else if (previousMove.type == 3) {
+                notation += "Promotion";
+            } else {
+                notation += previousMove.piece.name + previousMove.startingTile.tileCoordinate[0] + previousMove.startingTile.tileCoordinate[1] + "-" + previousMove.destinationTile.tileCoordinate[0] + previousMove.destinationTile.tileCoordinate[1];
+            }
+            //Checkmate and check notation
+            if(this.isWhiteInCheckMate || this.isBlackInCheckMate || this.isBlackInStaleMate || this.isWhiteInStaleMate){
+                notation += "#";
+            }else if(this.isWhiteInCheck || this.isBlackInCheck){
+                notation += "+";
+            }
+        }
+
+
+
+
+        return notation;
+    }
 
     // Collect a list of all piece belonging to a color
     public LinkedList<Piece> getPiece(int color){
