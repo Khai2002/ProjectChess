@@ -51,7 +51,7 @@ public class Loop {
             if (this.listBoard.get(count).colorActive == 1) {
                 Board newBoard = this.listBoard.get(count);
                 System.out.println(newBoard.previousMove);
-                newBoard.printBoard();
+                newBoard.printBoard1();
                 System.out.println(newBoard.whiteMoves);
                 System.out.println(newBoard.blackMoves);
 
@@ -79,6 +79,8 @@ public class Loop {
                 } while (whileCondition);
                 whileCondition = true;
                 this.listBoard.add(new Board(newBoard, whitemove, true,0));
+                //whitemove.toString();
+                System.out.println(this.listBoard.get(this.listBoard.size()-1).notation);
                 count++;
             }
 
@@ -116,6 +118,8 @@ public class Loop {
                     }
                 } while (whileCondition);
                 this.listBoard.add(new Board(newBoard, blackmove, true,0));
+                //blackmove.toString();
+                System.out.println(this.listBoard.get(this.listBoard.size()-1).notation);
                 count++;
             }
 
