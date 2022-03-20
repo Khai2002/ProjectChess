@@ -21,17 +21,18 @@ public class test {
         Scanner sc= new Scanner(System.in);
         long avantTraitement = System.currentTimeMillis();
 
-        Board board = new Board(Board.startFEN);
-
+        Board board = new Board(Board.ambitiousFEN);
+/*
         Interface interFace = new Interface(board);
 
         Human human1 = new Human();
         Human human2 = new Human();
         Engine engine1 = new Engine(3);
         Engine engine2 = new Engine(3);
-
+*/
         Loop loop = new Loop();
-        loop.gameLoopHumanMachine(board,interFace,human1,human2);
+        loop.gameLoop(board, sc);
+        //loop.gameLoopHumanMachine(board,interFace,human1,human2);
 
 //        board.printBoard();
 //
