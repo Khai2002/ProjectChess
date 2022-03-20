@@ -1,5 +1,6 @@
 package move;
 
+import board.Board;
 import board.Tile;
 import piece.*;
 
@@ -7,7 +8,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 public class Move implements Serializable {
-
+    public Board board;
     public String notation;
     public Piece piece;
     public Piece affectedPiece = null;
@@ -22,18 +23,18 @@ public class Move implements Serializable {
         this.piece = piece;
         this.startingTile = startingTile;
         this.destinationTile = destinationTile;
-        this.notation = this.createNotation();
         this.type = 0;
     }
 
-    public Move(){}
+    public Move(){
+        this.type = 0;
+    }
 
     public Move(Piece piece, Piece affectedPiece, Tile startingTile, Tile destinationTile){
         this.piece = piece;
         this.affectedPiece = affectedPiece;
         this.startingTile = startingTile;
         this.destinationTile = destinationTile;
-        this.notation = this.createNotation();
         this.type = 1;
 
     }
@@ -56,19 +57,6 @@ public class Move implements Serializable {
         this.type = 3;
     }
 
-    public String createNotation(){
-        // anh viet code trong nay nhe, dung 3 variable ma em cho them vao ay
-        // Co vi tri bat dau, vi tri ket thuc va quan co
-
-        // Quan co
-
-        // No co an hay ko
-
-        // No co bi ambiguity ko?
-
-        // Special Moves
-        return null;
-    }
 
     public boolean equals(Move move){
         return (this.startingTile.tileCoordinate[0] == move.startingTile.tileCoordinate[0]) &&
@@ -78,7 +66,45 @@ public class Move implements Serializable {
     }
 
     public String toString(){
-        if(this.type == 2){
+        if(this.type == 0){
+            String notation = "";
+            notation += Board.PIECE_NOTATION[Math.abs(this.piece.id) - 1];
+            /*
+            if (board.colorActive == 1 && board != null) {
+                for (Move move : board.whiteMoves) {
+                    if (move.piece.id == this.piece.id && move.destinationTile.equals(this.destinationTile)) {
+                        if (move.startingTile.tileCoordinate[0] == this.startingTile.tileCoordinate[0]) {
+                            notation += Board.ROW_NOTATION[7 - this.startingTile.tileCoordinate[1]];
+                        }
+                        if (move.startingTile.tileCoordinate[1] == this.startingTile.tileCoordinate[1]) {
+                            notation += Board.COLUMN_NOTATION[this.startingTile.tileCoordinate[0]];
+                        }
+                    }
+                }
+            } else {
+                for (Move move : board.blackMoves) {
+                    if (move.piece.id == this.piece.id && move.destinationTile.equals(this.destinationTile)) {
+                        if (move.startingTile.tileCoordinate[0] == this.startingTile.tileCoordinate[0]) {
+                            notation += Board.ROW_NOTATION[8 - this.startingTile.tileCoordinate[1]];
+                        }
+                        if (move.startingTile.tileCoordinate[1] == this.startingTile.tileCoordinate[1]) {
+                            notation += Board.COLUMN_NOTATION[this.startingTile.tileCoordinate[0]];
+                        }
+                    }
+                }
+            }
+            */
+            if(this.board != null) {
+                if (this.board.board[this.destinationTile.tileCoordinate[0]][this.destinationTile.tileCoordinate[1]] instanceof Tile.OccupiedTile) {
+                    notation += 'x';
+                }
+            }
+            notation += Board.COLUMN_NOTATION[this.destinationTile.tileCoordinate[1]];
+            notation += Board.ROW_NOTATION[7 - this.destinationTile.tileCoordinate[0]];
+            return notation;
+        }else if (this.type == 2){
+            return "";
+        }else if(this.type == 1){
             if(affectedPiece.position[1]>piece.position[1]){
                 return "0-0";
             }else{
@@ -89,6 +115,7 @@ public class Move implements Serializable {
         }else{
             return this.piece.name + this.startingTile.tileCoordinate[0] + this.startingTile.tileCoordinate[1]+ "-"+ this.destinationTile.tileCoordinate[0] + this.destinationTile.tileCoordinate[1];
         }
+
 
     }
 
