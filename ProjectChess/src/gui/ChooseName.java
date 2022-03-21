@@ -2,13 +2,15 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class ChooseName extends JFrame implements KeyListener{
+public class ChooseName extends JFrame implements KeyListener, ActionListener {
 
     JFrame frame;
-    JTextField question;
+    JButton question;
     JTextField text;
     JPanel panel;
     String name;
@@ -25,13 +27,14 @@ public class ChooseName extends JFrame implements KeyListener{
         this.addKeyListener(this);
         this.setVisible(true);
 
-        question = new JTextField("What is your name ?");
+        question = new JButton("What is your name ?");
         question.setBounds(0,0,360,60);
         question.setHorizontalAlignment(JTextField.CENTER);
         question.setFont(new Font("Comic Sans",Font.BOLD,25));
         question.setBackground(Color.orange);
         question.setForeground(Color.black);
-        question.setEditable(false);
+        //question.setEditable(false);
+        question.addActionListener(this);
 
         text = new JTextField();
         text.setBounds(0,60,360,140);
@@ -62,7 +65,7 @@ public class ChooseName extends JFrame implements KeyListener{
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode()==10){
             dispose();
-            new ChooseAvatar(text.getText());
+            new ChooseAvatar();
         }
 
     }
@@ -72,5 +75,11 @@ public class ChooseName extends JFrame implements KeyListener{
          System.out.println("char "+e.getKeyChar());
          System.out.println("code "+e.getKeyCode());
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        dispose();
+        new ChooseAvatar();
     }
 }

@@ -58,7 +58,12 @@ public class Chessboard extends JComponent implements MouseListener, ActionListe
             new Color(186,202,43),new Color(214,214,189), new Color(106,135,77),};
     Color[] themeLichess = {new Color(240,217,181), new Color(181,136,99), new Color(205,210,106),
             new Color(170,162,58), new Color(130,151,105), new Color(100,111,54)};
+    Color[] themePurple = {new Color(239,239,239),new Color(136,119,183),new Color(182,206,220),
+            new Color(130,146,192),new Color(215,215,215),new Color(122,107,164)};
+
+
     Color[] themeBlackPink = {new Color(219, 130, 207), new Color(52, 41, 52)};
+
 
     Color color1;
     Color color2;
@@ -85,7 +90,7 @@ public class Chessboard extends JComponent implements MouseListener, ActionListe
         this.board = board;
         loadImage();
         this.theme = theme;
-        this.timerAnimation = new Timer(10,this);
+        this.timerAnimation = new Timer(5,this);
         this.timerAnimation.start();
         this.isAnimating = false;
         this.addMouseListener(this);
@@ -117,10 +122,12 @@ public class Chessboard extends JComponent implements MouseListener, ActionListe
                 break;
 
             case 2:
-                color1 = themeBlackPink[0];
-                color2 = themeBlackPink[1];
-                color3 = themeBlackPink[2];
-                color4 = themeBlackPink[3];
+                color1 = themePurple[0];
+                color2 = themePurple[1];
+                color3 = themePurple[2];
+                color4 = themePurple[3];
+                color5 = themePurple[4];
+                color6 = themePurple[5];
                 break;
         }
 
@@ -196,7 +203,7 @@ public class Chessboard extends JComponent implements MouseListener, ActionListe
                         }
 
                         if(board.board[i][j] instanceof Tile.OccupiedTile){
-                            this.drawHollowCircle((Graphics2D) g,j*64+32,i*64+32,50);
+                            this.drawHollowCircle((Graphics2D) g,j*64+32,i*64+32,57);
                         }else{
                             this.drawCenteredCircle((Graphics2D) g,j*64+32,i*64+32,20);
                         }
@@ -262,6 +269,7 @@ public class Chessboard extends JComponent implements MouseListener, ActionListe
 
 
     }
+
     public void loadImage() throws IOException {
         pieceIcons[0] = ImageIO.read(new File("res/King_b.png")).getScaledInstance(64,64,Image.SCALE_AREA_AVERAGING);
         pieceIcons[1] = ImageIO.read(new File("res/Queen_b.png")).getScaledInstance(64,64,Image.SCALE_AREA_AVERAGING);
@@ -383,7 +391,6 @@ public class Chessboard extends JComponent implements MouseListener, ActionListe
         g.setStroke(new BasicStroke(4));
         g.drawOval(x-r/2, y-r/2, r, r);
     }
-
 
     @Override
     public void mouseClicked(MouseEvent e) {

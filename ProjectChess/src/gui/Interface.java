@@ -46,6 +46,10 @@ public class Interface extends JFrame implements ActionListener {
     public ChessTime timer1;
     public ChessTime timer2;
 
+    public CustomizeMenu menu1;
+    public CustomizeMenu menu2;
+    public JButton changeTheme;
+
     JButton draw;
     JButton resign;
     ImageIcon flag;
@@ -60,7 +64,7 @@ public class Interface extends JFrame implements ActionListener {
 
     public Interface(Board board) throws IOException {
 
-        chessBoard = new Chessboard(board,0);
+        chessBoard = new Chessboard(board,2);
         history = new History();
 
         //ChooseName chooseName1 = new ChooseName();
@@ -144,7 +148,7 @@ public class Interface extends JFrame implements ActionListener {
         ChoixPage2.setFocusable(false);
         ChoixPage2.addActionListener(this);
 
-        ChoixPage3 = new JButton("JOUEURS");
+        ChoixPage3 = new JButton("CUSTOM");
         ChoixPage3.setBounds(340, 0, 170, 55);
         ChoixPage3.setBackground(new Color(34, 32, 32));
         ChoixPage3.setForeground(new Color(232, 235, 211));
@@ -244,14 +248,30 @@ public class Interface extends JFrame implements ActionListener {
 
         //PJoueurs, joueur enregistré? --- actionPerformed récupère nom puis recherche dans une liste qu'on pourrait créer, classement
 
+        menu1 = new CustomizeMenu(1);
+        menu1.setBounds(10,10,240,350);
+
+        menu2 = new CustomizeMenu(2);
+        menu2.setBounds(260,10,240,350);
+
+        changeTheme = new JButton("Change Theme");
+        changeTheme.setBounds(55,380,400,50);
+        changeTheme.setBackground(new Color(102, 182, 220));
+        changeTheme.setFont(new Font("Comic Sans", Font.BOLD, 28));
+        changeTheme.setFocusable(false);
+        changeTheme.addActionListener(this);
+
         Page3 = new JPanel();
         Parameters.add(Page3);
-        //Page3.setLayout(null);
+        Page3.setLayout(null);
         Page3.setBounds(0, 55, 510, 570);
         RechercheJ = new JTextField("Nom d'utilisateur...");
         RechercheJ.setBounds(0, 55, 510, 20 );
         //Page3.setBackground(new Color(34, 32, 32));
         Page3.setBackground(new Color(224, 224, 224));
+        Page3.add(menu1);
+        Page3.add(menu2);
+        Page3.add(changeTheme);
         Page3.setVisible(false);
 
 
@@ -268,6 +288,17 @@ public class Interface extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        // Page 3 Actions
+        if(e.getSource() == changeTheme){
+            if(chessBoard.theme == 2){
+                chessBoard.theme = 0;
+            }else{
+                chessBoard.theme ++;
+            }
+            chessBoard.repaint();
+        }
+
         if(e.getSource() == button){
             startingInput = startingTextField.getText();
             destinationInput = destinationTextField.getText();
@@ -275,6 +306,10 @@ public class Interface extends JFrame implements ActionListener {
         }else if(e.getSource() == BJouer){
             System.out.println("Fart");
             this.chessBoard.isInGame = true;
+            this.menu1.isInGame = true;
+            this.menu2.isInGame = true;
+            this.menu1.checkForAvatar.stop();
+            this.menu2.checkForAvatar.stop();
         }
 
         if(e.getSource() == ChoixPage1) {
