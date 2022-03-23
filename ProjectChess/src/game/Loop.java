@@ -51,7 +51,7 @@ public class Loop {
             if (this.listBoard.get(count).colorActive == 1) {
                 Board newBoard = this.listBoard.get(count);
                 System.out.println(newBoard.previousMove);
-                newBoard.printBoard1();
+                newBoard.printBoard();
                 System.out.println(newBoard.whiteMoves);
                 System.out.println(newBoard.blackMoves);
 
@@ -79,8 +79,6 @@ public class Loop {
                 } while (whileCondition);
                 whileCondition = true;
                 this.listBoard.add(new Board(newBoard, whitemove, true,0));
-                //whitemove.toString();
-                System.out.println(this.listBoard.get(this.listBoard.size()-1).notation);
                 count++;
             }
 
@@ -118,8 +116,6 @@ public class Loop {
                     }
                 } while (whileCondition);
                 this.listBoard.add(new Board(newBoard, blackmove, true,0));
-                //blackmove.toString();
-                System.out.println(this.listBoard.get(this.listBoard.size()-1).notation);
                 count++;
             }
 
@@ -176,22 +172,28 @@ public class Loop {
 
             }else{
 
+                //Thread.sleep(100);
+
                 Move newMove;
 
                 if(currentActiveColor == 1){
-                    int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).whiteMoves.size()));
-                    newMove = this.listBoard.get(this.listBoard.size()-1).whiteMoves.get(randomChoice);
+                    newMove = ((Engine) whitePlayer).engineChoose(this.listBoard.get(this.listBoard.size()-1));
+                    //int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).whiteMoves.size()));
+                    //newMove = this.listBoard.get(this.listBoard.size()-1).whiteMoves.get(randomChoice);
                 }else{
-                    int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).blackMoves.size()));
-                    newMove = this.listBoard.get(this.listBoard.size()-1).blackMoves.get(randomChoice);
+                    newMove = ((Engine) blackPlayer).engineChoose(this.listBoard.get(this.listBoard.size()-1));
+                    //int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).blackMoves.size()));
+                    //newMove = this.listBoard.get(this.listBoard.size()-1).blackMoves.get(randomChoice);
                 }
 
-                Thread.sleep(50);
+
                 this.listBoard.add(new Board(this.listBoard.get(this.listBoard.size()-1), newMove,true,0));
             }
 
 
+            interFace.history.moves.add(this.listBoard.get(this.listBoard.size()-1).previousMove.toString());
             interFace.updateInterface(this.listBoard.get(this.listBoard.size()-1));
+
 
 
         }

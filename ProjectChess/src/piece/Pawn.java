@@ -112,7 +112,7 @@ public class Pawn extends Piece{
                     board.board[this.position[0]+move[0]][this.position[1]+move[1]]));
 
             if(board.eliminateMove){
-                System.out.println("solved the problem" + board.board[this.position[0]][this.position[1] + move[1]].pieceOnTile);
+                //System.out.println("solved the problem" + board.board[this.position[0]][this.position[1] + move[1]].pieceOnTile);
             }
 
             }

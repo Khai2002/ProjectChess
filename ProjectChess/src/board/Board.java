@@ -29,6 +29,7 @@ public class Board implements Serializable, Comparable<Board> {
     public static final String enPassantInitFEN = "1r2kr2/pp1p1pp1/2p4p/7P/P1PP4/1P6/5PP1/R3K2R b KQ - 0 20";
     public static final String promotionFEN = "r1bqkbnr/pPpppppp/8/8/8/8/8/4K3 w kq - 0 1";
     public static final String ambitiousFEN = "rnbqkbnr/pppppppp/8/8/8/2N3N1/PPPPPPPP/R1BQKB1R w KQkq - 0 1";
+
     // Local Attributes ====================================================== //
 
 
@@ -73,7 +74,8 @@ public class Board implements Serializable, Comparable<Board> {
     // Attributes for engine
     public int searchDepth;
     public double boardStateEvaluation;
-    public double treeStateEvaluation;
+    public double treeStateEvaluation = 696969;
+    public Move optiMalMove;
     public TreeSet<Board> nextBoardSet = new TreeSet<>();
 
 
@@ -130,13 +132,15 @@ public class Board implements Serializable, Comparable<Board> {
     public Board(Board previousBoard, Move move, boolean eliminateMove, int searchDepth){
         this.eliminateMove = eliminateMove;
         this.searchDepth = searchDepth;
-        move.board = previousBoard;
+
+        move.board = this;
         this.notation = getNotation();
+
         // Previous state of Board and Move
         this.previousBoard = previousBoard;
         this.previousMove = move;
         if(eliminateMove){
-            System.out.println(this.previousMove.type);
+            //System.out.println(this.previousMove.type);
         }
 
         // Creating En Passant Square
@@ -148,7 +152,7 @@ public class Board implements Serializable, Comparable<Board> {
             this.enPassantTileCoordinate[0] = (this.previousMove.destinationTile.tileCoordinate[0] + this.previousMove.startingTile.tileCoordinate[0])/2;
             this.enPassantTileCoordinate[1] = this.previousMove.startingTile.tileCoordinate[1];
 
-            System.out.println("We got en passant square of " + this.enPassantTileCoordinate[0] + " " + this.enPassantTileCoordinate[1]);
+            //System.out.println("We got en passant square of " + this.enPassantTileCoordinate[0] + " " + this.enPassantTileCoordinate[1]);
 
         }
 
@@ -196,7 +200,7 @@ public class Board implements Serializable, Comparable<Board> {
         // Delete Pawn if move type is 1
         if(move.type == 1){
             this.board[move.affectedPiece.position[0]][move.affectedPiece.position[1]] = new Tile.EmptyTile(move.affectedPiece.position);
-            System.out.println("Oh yeah" + this.previousMove.affectedPiece.position[0] + this.previousMove.affectedPiece.position[1]);
+            //System.out.println("Oh yeah" + this.previousMove.affectedPiece.position[0] + this.previousMove.affectedPiece.position[1]);
             this.board[move.affectedPiece.position[0]][move.affectedPiece.position[1]] = new Tile.EmptyTile(move.affectedPiece.position);
         }
 
@@ -268,81 +272,6 @@ public class Board implements Serializable, Comparable<Board> {
     }
 
     // Methods ============================================================== //
-
-
-    public String getNotation(){
-        String notation = "";
-        System.out.print("Tung1");
-        if(previousMove != null && previousBoard != null) {
-            System.out.print("Tung2");
-
-            // Normal notation
-            if (previousMove.type == 0) {
-                notation += Board.PIECE_NOTATION[Math.abs(previousMove.piece.id) - 1];
-                if (this.colorActive == 1 && board != null) {
-                    for (Move move : whiteMoves) {
-                        if (move.piece.id == previousMove.piece.id && move.destinationTile.equals(previousMove.destinationTile)) {
-                            if (move.startingTile.tileCoordinate[0] == previousMove.startingTile.tileCoordinate[0]) {
-                                notation += Board.ROW_NOTATION[7 - previousMove.startingTile.tileCoordinate[1]];
-                            }
-                            if (move.startingTile.tileCoordinate[1] == previousMove.startingTile.tileCoordinate[1]) {
-                                notation += Board.COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[0]];
-                            }
-                        }
-                    }
-                } else {
-                    for (Move move : blackMoves) {
-                        if (move.piece.id == previousMove.piece.id && move.destinationTile.equals(previousMove.destinationTile)) {
-                            if (move.startingTile.tileCoordinate[0] == previousMove.startingTile.tileCoordinate[0]) {
-                                notation += Board.ROW_NOTATION[8 - previousMove.startingTile.tileCoordinate[1]];
-                            }
-                            if (move.startingTile.tileCoordinate[1] == previousMove.startingTile.tileCoordinate[1]) {
-                                notation += Board.COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[0]];
-                            }
-                        }
-                    }
-                }
-
-                if (this.board != null) {
-                    if (this.board[previousMove.destinationTile.tileCoordinate[0]][previousMove.destinationTile.tileCoordinate[1]] instanceof Tile.OccupiedTile) {
-                        notation += 'x';
-                    }
-                }
-                notation += COLUMN_NOTATION[previousMove.destinationTile.tileCoordinate[1]];
-                notation += ROW_NOTATION[7 - previousMove.destinationTile.tileCoordinate[0]];
-
-
-            // Castle notation
-            } else if (previousMove.type == 1) {
-                if (previousMove.affectedPiece.position[1] > previousMove.piece.position[1]) {
-                    return "0-0";
-                } else {
-                    return "0-0-0";
-                }
-
-            // En passant notation
-            } else if (previousMove.type == 2) {
-                notation += COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[1]] + "x" + COLUMN_NOTATION[previousMove.destinationTile.tileCoordinate[1]] + ROW_NOTATION[7 - previousMove.destinationTile.tileCoordinate[0]];
-
-            // Promotion notation
-            } else if (previousMove.type == 3) {
-                notation += "Promotion";
-            } else {
-                notation += previousMove.piece.name + previousMove.startingTile.tileCoordinate[0] + previousMove.startingTile.tileCoordinate[1] + "-" + previousMove.destinationTile.tileCoordinate[0] + previousMove.destinationTile.tileCoordinate[1];
-            }
-            //Checkmate and check notation
-            if(this.isWhiteInCheckMate || this.isBlackInCheckMate || this.isBlackInStaleMate || this.isWhiteInStaleMate){
-                notation += "#";
-            }else if(this.isWhiteInCheck || this.isBlackInCheck){
-                notation += "+";
-            }
-        }
-
-
-
-
-        return notation;
-    }
 
     // Collect a list of all piece belonging to a color
     public LinkedList<Piece> getPiece(int color){
@@ -916,6 +845,80 @@ public class Board implements Serializable, Comparable<Board> {
             System.out.println();
         }
         System.out.println("  a b c d e f g h");
+    }
+
+    public String getNotation(){
+        String notation = "";
+        //System.out.print("Tung1");
+        if(previousMove != null && previousBoard != null) {
+            System.out.print("Tung2");
+
+            // Normal notation
+            if (previousMove.type == 0) {
+                notation += Board.PIECE_NOTATION[Math.abs(previousMove.piece.id) - 1];
+                if (this.colorActive == 1 && board != null) {
+                    for (Move move : whiteMoves) {
+                        if (move.piece.id == previousMove.piece.id && move.destinationTile.equals(previousMove.destinationTile)) {
+                            if (move.startingTile.tileCoordinate[0] == previousMove.startingTile.tileCoordinate[0]) {
+                                notation += Board.ROW_NOTATION[7 - previousMove.startingTile.tileCoordinate[1]];
+                            }
+                            if (move.startingTile.tileCoordinate[1] == previousMove.startingTile.tileCoordinate[1]) {
+                                notation += Board.COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[0]];
+                            }
+                        }
+                    }
+                } else {
+                    for (Move move : blackMoves) {
+                        if (move.piece.id == previousMove.piece.id && move.destinationTile.equals(previousMove.destinationTile)) {
+                            if (move.startingTile.tileCoordinate[0] == previousMove.startingTile.tileCoordinate[0]) {
+                                notation += Board.ROW_NOTATION[8 - previousMove.startingTile.tileCoordinate[1]];
+                            }
+                            if (move.startingTile.tileCoordinate[1] == previousMove.startingTile.tileCoordinate[1]) {
+                                notation += Board.COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[0]];
+                            }
+                        }
+                    }
+                }
+
+                if (this.board != null) {
+                    if (this.board[previousMove.destinationTile.tileCoordinate[0]][previousMove.destinationTile.tileCoordinate[1]] instanceof Tile.OccupiedTile) {
+                        notation += 'x';
+                    }
+                }
+                notation += COLUMN_NOTATION[previousMove.destinationTile.tileCoordinate[1]];
+                notation += ROW_NOTATION[7 - previousMove.destinationTile.tileCoordinate[0]];
+
+
+                // Castle notation
+            } else if (previousMove.type == 1) {
+                if (previousMove.affectedPiece.position[1] > previousMove.piece.position[1]) {
+                    return "0-0";
+                } else {
+                    return "0-0-0";
+                }
+
+                // En passant notation
+            } else if (previousMove.type == 2) {
+                notation += COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[1]] + "x" + COLUMN_NOTATION[previousMove.destinationTile.tileCoordinate[1]] + ROW_NOTATION[7 - previousMove.destinationTile.tileCoordinate[0]];
+
+                // Promotion notation
+            } else if (previousMove.type == 3) {
+                notation += "Promotion";
+            } else {
+                notation += previousMove.piece.name + previousMove.startingTile.tileCoordinate[0] + previousMove.startingTile.tileCoordinate[1] + "-" + previousMove.destinationTile.tileCoordinate[0] + previousMove.destinationTile.tileCoordinate[1];
+            }
+            //Checkmate and check notation
+            if(this.isWhiteInCheckMate || this.isBlackInCheckMate || this.isBlackInStaleMate || this.isWhiteInStaleMate){
+                notation += "#";
+            }else if(this.isWhiteInCheck || this.isBlackInCheck){
+                notation += "+";
+            }
+        }
+
+
+
+
+        return notation;
     }
 
     @Override

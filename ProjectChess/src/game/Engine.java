@@ -13,7 +13,15 @@ public class Engine extends Player{
         this.depth = depth;
     }
 
-    public void engineChoose(Board board, int color){}
+    public Move engineChoose(Board board){
+
+        String stringBoard = board.BoardToFen();
+
+        Board engineBoard = new Board(stringBoard);
+
+        this.buildNextSet(engineBoard);
+        return engineBoard.optiMalMove;
+    }
 
     public int buildNextSet(Board board){
 
@@ -23,13 +31,30 @@ public class Engine extends Player{
         if(board.searchDepth < this.depth){
             if(board.colorActive ==1){
                 for(Move move: board.whiteMoves){
-                    Board newBoard = new Board(board, move, true, board.searchDepth + 1);
+                    Board newBoard;
+                    if(board.searchDepth+1 == this.depth){
+                        newBoard = new Board(board, move, false, board.searchDepth + 1);
+                        newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
+                        //System.out.println(newBoard.treeStateEvaluation);
+
+                    }else{
+                        newBoard = new Board(board, move, true, board.searchDepth + 1);
+                        newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
+
+                    }
+
                     board.nextBoardSet.add(newBoard);
                     counter ++;
                 }
             }else{
                 for(Move move: board.blackMoves){
-                    Board newBoard = new Board(board, move, true, board.searchDepth + 1);
+                    Board newBoard;
+                    if(board.searchDepth+1 == this.depth){
+                        newBoard = new Board(board, move, false, board.searchDepth + 1);
+                        newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
+                    }else{
+                        newBoard = new Board(board, move, true, board.searchDepth + 1);
+                    }
                     board.nextBoardSet.add(newBoard);
                     counter ++;
                 }
@@ -39,8 +64,29 @@ public class Engine extends Player{
         //System.out.println(board.nextBoardSet.size());
 
         if(!board.nextBoardSet.isEmpty()){
+            int temp = 0;
             for(Board cursor: board.nextBoardSet){
                 counter += buildNextSet(cursor);
+
+                if(temp == 0){
+                    board.treeStateEvaluation = cursor.treeStateEvaluation;
+                    board.optiMalMove = cursor.previousMove;
+                    //System.out.println("Heyyyyyyyyyyyy");
+                }else{
+                    if(board.colorActive == 1){
+                        if(board.treeStateEvaluation < cursor.treeStateEvaluation){
+                            board.treeStateEvaluation = cursor.treeStateEvaluation;
+                            board.optiMalMove = cursor.previousMove;
+                        }
+                    }else{
+                        if(board.treeStateEvaluation > cursor.treeStateEvaluation){
+                            board.treeStateEvaluation = cursor.treeStateEvaluation;
+                            board.optiMalMove = cursor.previousMove;
+                        }
+                    }
+                }
+
+                temp ++;
             }
         }
 

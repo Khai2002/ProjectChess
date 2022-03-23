@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 public class Move implements Serializable {
+
     public Board board;
     public String notation;
     public Piece piece;
@@ -64,6 +65,21 @@ public class Move implements Serializable {
                 (this.destinationTile.tileCoordinate[0] == move.destinationTile.tileCoordinate[0]) &&
                 (this.destinationTile.tileCoordinate[1] == move.destinationTile.tileCoordinate[1]);
     }
+
+//    public String toString(){
+//        if(this.type == 2){
+//            if(affectedPiece.position[1]>piece.position[1]){
+//                return "0-0";
+//            }else{
+//                return "0-0-0";
+//            }
+//        }else if(this.type == 3){
+//            return "Promotion";
+//        }else{
+//            return this.piece.name + this.startingTile.tileCoordinate[0] + this.startingTile.tileCoordinate[1]+ "-"+ this.destinationTile.tileCoordinate[0] + this.destinationTile.tileCoordinate[1];
+//        }
+//
+//    }
 
     public String toString(){
         if(this.type == 0){
