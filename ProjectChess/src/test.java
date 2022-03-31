@@ -31,8 +31,9 @@ public class test {
         Engine engine2 = new Engine(3);
 
         Loop loop = new Loop();
+        //loop.gameLoop(board,sc);
 
-        loop.gameLoopHumanMachine(board,interFace,engine1,engine2);
+        loop.gameLoopHumanMachine(board,interFace,human1,engine2);
 
 
 
