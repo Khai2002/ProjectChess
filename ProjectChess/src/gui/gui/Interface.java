@@ -334,18 +334,12 @@ public class Interface extends JFrame implements ActionListener {
 
             TempPartie.setEditable(false);
         }else if(e.getSource() == timerUpdate){
-            if ((timer1.seconde >= 11 && timer1.minute !=0) || (timer2.seconde > 11 && timer2.minute != 0)) {
+            if ((timer1.seconde > 10) || (timer2.seconde > 10)) {
                 TimerB.setText(timer1.minute + ":" + timer1.seconde);
                 TimerW.setText(timer2.minute + ":" + timer2.seconde);
-            } else if ((timer1.seconde <= 11 && timer1.minute !=0) || (timer2.seconde < 11 && timer2.minute != 0)) {
+            } else if ((timer1.seconde < 10) || (timer2.seconde < 10)) {
                 TimerB.setText(timer1.minute + ":0" + timer1.seconde);
                 TimerW.setText(timer2.minute + ":0" + timer2.seconde);
-            } else if ((timer1.seconde >= 11 && timer1.minute ==0) || (timer2.seconde > 11 && timer2.minute == 0)){
-                TimerB.setText(timer1.minute+ "0:" + timer1.seconde);
-                TimerW.setText(timer2.minute + "0:" + timer2.seconde);
-            } else if ((timer1.seconde <= 11 && timer1.minute ==0) || (timer2.seconde < 11 && timer2.minute == 0)){
-                TimerB.setText(timer1.minute+ "0:0" + timer1.seconde);
-                TimerW.setText(timer2.minute + "0:0" + timer2.seconde);
             }
         }
 
@@ -437,7 +431,7 @@ public class Interface extends JFrame implements ActionListener {
         this.destinationTextField.setText("");
         this.buttonActivated = false;
         this.history.repaint();
-        
+
 
     }
 

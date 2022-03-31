@@ -30,10 +30,11 @@ public class ChessTime {
                         minute--;
                         counter = 59;
                         seconde = 59;
-                        System.out.println("00 " + seconde);
+                        System.out.println("" +minute +" " + seconde);
                     } else {
                         FinDeLaPartie = new WindowTheEnd();
                         FinDeLaPartie.setVisible(true);
+                        Mytimer.cancel();
                     }
                 }
             }
@@ -46,7 +47,7 @@ public class ChessTime {
     }
 
     public static void main(String[] args) {
-        ChessTime time = new ChessTime(1, 5);
+        ChessTime time = new ChessTime(0, 10);
         time.start();
     }
 }
