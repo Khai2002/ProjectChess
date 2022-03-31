@@ -134,11 +134,11 @@ public class Board implements Serializable, Comparable<Board> {
         this.searchDepth = searchDepth;
 
         move.board = this;
-        this.notation = getNotation();
 
         // Previous state of Board and Move
         this.previousBoard = previousBoard;
         this.previousMove = move;
+
         if(eliminateMove){
             //System.out.println(this.previousMove.type);
         }
@@ -266,7 +266,7 @@ public class Board implements Serializable, Comparable<Board> {
 
         this.boardStateEvaluation = this.calculateValue();
 
-
+        this.notation = getNotation();
 
 
     }
@@ -849,14 +849,13 @@ public class Board implements Serializable, Comparable<Board> {
 
     public String getNotation(){
         String notation = "";
-        //System.out.print("Tung1");
-        if(previousMove != null && previousBoard != null) {
-            System.out.print("Tung2");
 
+        try {
             // Normal notation
             if (previousMove.type == 0) {
                 notation += Board.PIECE_NOTATION[Math.abs(previousMove.piece.id) - 1];
-                if (this.colorActive == 1 && board != null) {
+
+                if (this.colorActive == 1 ) {
                     for (Move move : whiteMoves) {
                         if (move.piece.id == previousMove.piece.id && move.destinationTile.equals(previousMove.destinationTile)) {
                             if (move.startingTile.tileCoordinate[0] == previousMove.startingTile.tileCoordinate[0]) {
@@ -881,7 +880,7 @@ public class Board implements Serializable, Comparable<Board> {
                 }
 
                 if (this.board != null) {
-                    if (this.board[previousMove.destinationTile.tileCoordinate[0]][previousMove.destinationTile.tileCoordinate[1]] instanceof Tile.OccupiedTile) {
+                    if (previousBoard.board[previousMove.destinationTile.tileCoordinate[0]][previousMove.destinationTile.tileCoordinate[1]] instanceof Tile.OccupiedTile) {
                         notation += 'x';
                     }
                 }
@@ -890,7 +889,7 @@ public class Board implements Serializable, Comparable<Board> {
 
 
                 // Castle notation
-            } else if (previousMove.type == 1) {
+            } else if (previousMove.type == 2) {
                 if (previousMove.affectedPiece.position[1] > previousMove.piece.position[1]) {
                     return "0-0";
                 } else {
@@ -898,7 +897,7 @@ public class Board implements Serializable, Comparable<Board> {
                 }
 
                 // En passant notation
-            } else if (previousMove.type == 2) {
+            } else if (previousMove.type == 1) {
                 notation += COLUMN_NOTATION[previousMove.startingTile.tileCoordinate[1]] + "x" + COLUMN_NOTATION[previousMove.destinationTile.tileCoordinate[1]] + ROW_NOTATION[7 - previousMove.destinationTile.tileCoordinate[0]];
 
                 // Promotion notation
@@ -908,14 +907,14 @@ public class Board implements Serializable, Comparable<Board> {
                 notation += previousMove.piece.name + previousMove.startingTile.tileCoordinate[0] + previousMove.startingTile.tileCoordinate[1] + "-" + previousMove.destinationTile.tileCoordinate[0] + previousMove.destinationTile.tileCoordinate[1];
             }
             //Checkmate and check notation
-            if(this.isWhiteInCheckMate || this.isBlackInCheckMate || this.isBlackInStaleMate || this.isWhiteInStaleMate){
+            if (this.isWhiteInCheckMate || this.isBlackInCheckMate || this.isBlackInStaleMate || this.isWhiteInStaleMate) {
                 notation += "#";
-            }else if(this.isWhiteInCheck || this.isBlackInCheck){
+            } else if (this.isWhiteInCheck || this.isBlackInCheck) {
                 notation += "+";
             }
+        }catch(Exception e){
+
         }
-
-
 
 
         return notation;
