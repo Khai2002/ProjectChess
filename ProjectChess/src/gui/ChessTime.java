@@ -8,39 +8,50 @@ public class ChessTime {
     public int seconde;
     public Timer Mytimer;
     public WindowTheEnd FinDeLaPartie;
+    private TimerTask task;
 
     public ChessTime(int m, int s) {
         minute = m;
         seconde = s;
         Mytimer = new Timer();
 
-        TimerTask task = new TimerTask() {
-            int counter = 60;
+
+
+        this.task = new TimerTask() {
+            int counter = seconde;
 
             public void run() {
                 if (counter > 0) {
-                    seconde = counter;
                     counter--;
+                    seconde = counter;
+                    System.out.println("" + minute + " " + seconde);
                 } else {
-                    if (counter == 0 && (minute != 0)) {
+                    if (counter == 0 && minute != 0) {
                         minute--;
-                        counter = 60;
-                        seconde = 60;
+                        counter = 59;
+                        seconde = 59;
+                        System.out.println("" +minute +" " + seconde);
                     } else {
+                        FinDeLaPartie = new WindowTheEnd();
                         FinDeLaPartie.setVisible(true);
+                        Mytimer.cancel();
                     }
                 }
             }
         };
 
-
-
     }
 
     public void start() {
-        //Mytimer.scheduleAtFixedRate(taskTimer,0, 1000);
+        Mytimer.scheduleAtFixedRate(this.task, 0, 1000);
+    }
+    
+    public void freezetime() {
+        Mytimer.stop();
     }
 
-
-
+    public static void main(String[] args) {
+        ChessTime time = new ChessTime(0, 10);
+        time.start();
+    }
 }
