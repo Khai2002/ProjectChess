@@ -79,6 +79,7 @@ public class Loop {
                 } while (whileCondition);
                 whileCondition = true;
                 this.listBoard.add(new Board(newBoard, whitemove, true,0));
+                System.out.println(this.listBoard.get(this.listBoard.size()-1).notation);
                 count++;
             }
 
@@ -116,6 +117,7 @@ public class Loop {
                     }
                 } while (whileCondition);
                 this.listBoard.add(new Board(newBoard, blackmove, true,0));
+                System.out.println(this.listBoard.get(this.listBoard.size()-1).notation);
                 count++;
             }
 
@@ -172,7 +174,7 @@ public class Loop {
 
             }else{
 
-                //Thread.sleep(100);
+                Thread.sleep(1000);
 
                 Move newMove;
 
