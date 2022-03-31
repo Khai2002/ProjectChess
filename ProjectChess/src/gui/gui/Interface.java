@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.sql.Time;
 import javax.swing .*;
 
 
@@ -34,7 +33,7 @@ public class Interface extends JFrame implements ActionListener {
     public JButton ChoixPage3;
     public JButton BJouer;
     public JButton StyleChessBoard;
-    public JComboBox TempPartie;
+    private JComboBox TempPartie;
     public Object[] ElementsTempPartie;
     public JTextField Recherche;
     public JTextField RechercheJ;
@@ -47,6 +46,7 @@ public class Interface extends JFrame implements ActionListener {
     public ChessTime timer2;
     public JLabel TimerB;
     public JLabel TimerW;
+    public Timer timerUpdate;
 
     public CustomizeMenu menu1;
     public CustomizeMenu menu2;
@@ -57,7 +57,6 @@ public class Interface extends JFrame implements ActionListener {
     ImageIcon flag;
     ImageIcon drawIcon;
 
-    JComponent thing;
 
     public static void main(String[] args) throws IOException {
         Board board = new Board(Board.startFEN);
@@ -68,6 +67,8 @@ public class Interface extends JFrame implements ActionListener {
 
         chessBoard = new Chessboard(board,2);
         history = new History();
+
+        timerUpdate = new Timer(10,this);
 
         //ChooseName chooseName1 = new ChooseName();
         //name1 = chooseName1.text.getText();
@@ -117,8 +118,8 @@ public class Interface extends JFrame implements ActionListener {
         AfftimerB.setBackground(Color.GRAY);
 
         TimerB = new JLabel();
-        TimerB.setBounds(10, 10, 110, 30);
-        TimerB.setFont(new Font("Comic Sans", Font.BOLD, 20));
+        TimerB.setBounds(10, 0, 110, 40);
+        TimerB.setFont(new Font("Comic Sans", Font.BOLD, 22));
         AfftimerB.add(TimerB);
 
         AfftimerW = new JPanel();
@@ -126,8 +127,8 @@ public class Interface extends JFrame implements ActionListener {
         AfftimerW.setBackground(Color.GRAY);
 
         TimerW = new JLabel();
-        TimerW.setBounds(10, 10, 110, 30);
-        TimerW.setFont(new Font("Comic Sans", Font.BOLD, 20));
+        TimerW.setBounds(10, 0, 110, 30);
+        TimerW.setFont(new Font("Comic Sans", Font.BOLD, 22));
         AfftimerW.add(TimerW);
 
         Parameters = new JPanel() ;
@@ -180,7 +181,7 @@ public class Interface extends JFrame implements ActionListener {
 
         //Création JComboBox
         ElementsTempPartie = new Object[] {"1 min", "1|1", "2|1", "3 min", "3|2", "5 min", "5|5", "10 min"};
-        JComboBox TempPartie = new JComboBox(ElementsTempPartie);
+        TempPartie = new JComboBox<>(ElementsTempPartie);
         TempPartie.setBounds(70, 192, 370, 50);
         TempPartie.setFont(new Font("Comics Sans",Font.BOLD,18));
         TempPartie.setFocusable(false);
@@ -312,13 +313,40 @@ public class Interface extends JFrame implements ActionListener {
             startingInput = startingTextField.getText();
             destinationInput = destinationTextField.getText();
             buttonActivated = true;
-        }else if(e.getSource() == BJouer){
+        }else if(e.getSource() == BJouer && !this.chessBoard.isInGame){
             System.out.println("Fart");
             this.chessBoard.isInGame = true;
             this.menu1.isInGame = true;
             this.menu2.isInGame = true;
             this.menu1.checkForAvatar.stop();
             this.menu2.checkForAvatar.stop();
+            this.timerUpdate.start();
+
+            if(timer1==null){
+                timer1 = new ChessTime(1, 0);
+            }
+            if(timer2==null){
+                timer2 = new ChessTime(1,0);
+            }
+
+            timer1.start();
+            timer2.start();
+
+            TempPartie.setEditable(false);
+        }else if(e.getSource() == timerUpdate){
+            if ((timer1.seconde >= 11 && timer1.minute !=0) || (timer2.seconde > 11 && timer2.minute != 0)) {
+                TimerB.setText(timer1.minute + ":" + timer1.seconde);
+                TimerW.setText(timer2.minute + ":" + timer2.seconde);
+            } else if ((timer1.seconde <= 11 && timer1.minute !=0) || (timer2.seconde < 11 && timer2.minute != 0)) {
+                TimerB.setText(timer1.minute + ":0" + timer1.seconde);
+                TimerW.setText(timer2.minute + ":0" + timer2.seconde);
+            } else if ((timer1.seconde >= 11 && timer1.minute ==0) || (timer2.seconde > 11 && timer2.minute == 0)){
+                TimerB.setText(timer1.minute+ "0:" + timer1.seconde);
+                TimerW.setText(timer2.minute + "0:" + timer2.seconde);
+            } else if ((timer1.seconde <= 11 && timer1.minute ==0) || (timer2.seconde < 11 && timer2.minute == 0)){
+                TimerB.setText(timer1.minute+ "0:0" + timer1.seconde);
+                TimerW.setText(timer2.minute + "0:0" + timer2.seconde);
+            }
         }
 
         if(e.getSource() == ChoixPage1) {
@@ -334,19 +362,30 @@ public class Interface extends JFrame implements ActionListener {
             Page2.setVisible(false);
             Page3.setVisible(true);
         }
-        if(e.getSource() == TempPartie) {
-            String temps = (String) TempPartie.getSelectedItem();
-            switch (temps) {
-                case "1 min":
-                    //create 2 timers
-                    timer1 = new ChessTime(1, 0);
-                    timer2 = new ChessTime(1, 0);
-                    timer1.start();
-                    timer2.start();
-                    TimerB.setText(timer1.minute + ":" + timer1.seconde);
-                    TimerW.setText(timer2.minute + ":" + timer2.seconde);
+        if(e.getSource() == getTempPartie() && !this.chessBoard.isInGame) {
+            String temps = (String) getTempPartie().getSelectedItem();
+            if (temps == "1 min") {
+                timer1 = new ChessTime(1, 0);
+                timer2 = new ChessTime(1, 0);
+                //timer1.start();
+                //timer2.start();
+                //TimerB.setText(timer1.minute + ":" + timer1.seconde);
+                //TimerW.setText(timer2.minute + ":" + timer2.seconde);
+            }
+            if (temps == "3 min") {
+                timer1 = new ChessTime(3, 0);
+                timer2 = new ChessTime(3, 0);
+            }
+            if (temps == "5 min") {
+                timer1 = new ChessTime(5, 0);
+                timer2 = new ChessTime(5, 0);
+            }
+            if (temps == "10 min") {
+                timer1 = new ChessTime(10, 0);
+                timer2 = new ChessTime(10, 0);
+            }
                     //chercher comment arrêter le temps
-                    break;
+                    /*break;
                 case "1|1":
                     break;
                 case "2|1":
@@ -385,7 +424,7 @@ public class Interface extends JFrame implements ActionListener {
                     TimerW.setText(timer2.minute + ":" + timer2.seconde);
                     //chercher comment arrêter le temps
                     break;
-            }
+            }*/
         }
 
     }
@@ -398,7 +437,16 @@ public class Interface extends JFrame implements ActionListener {
         this.destinationTextField.setText("");
         this.buttonActivated = false;
         this.history.repaint();
+        
 
+    }
+
+    public JComboBox getTempPartie() {
+        return TempPartie;
+    }
+
+    public void setTempPartie(JComboBox tempPartie) {
+        TempPartie = tempPartie;
     }
 }
 
