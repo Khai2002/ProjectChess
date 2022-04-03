@@ -13,10 +13,6 @@ public class Interface extends JFrame implements ActionListener {
     public Chessboard chessBoard;
     public History history;
 
-    ImageIcon avatar1;
-    ImageIcon avatar2;
-    String name1;
-    String name2;
 
     JButton button;
     JTextField startingTextField;
@@ -52,10 +48,20 @@ public class Interface extends JFrame implements ActionListener {
     public CustomizeMenu menu2;
     public JButton changeTheme;
 
+    public JPanel taskBar1;
+    public JPanel taskBar2;
+    public JLabel name1;
+    public JLabel name2;
+    public JLabel avatar1;
+    public JLabel avatar2;
+
+
     JButton draw;
     JButton resign;
     ImageIcon flag;
     ImageIcon drawIcon;
+
+
 
 
     public static void main(String[] args) throws IOException {
@@ -70,11 +76,7 @@ public class Interface extends JFrame implements ActionListener {
 
         timerUpdate = new Timer(10,this);
 
-        //ChooseName chooseName1 = new ChooseName();
-        //name1 = chooseName1.text.getText();
 
-        //ChooseAvatar chooseAvatar1 = new ChooseAvatar(name1);
-        //avatar1 = chooseAvatar1.avatarChosen;
 
         this.setTitle("Chess");
         this.setSize(1160,700);
@@ -94,14 +96,10 @@ public class Interface extends JFrame implements ActionListener {
 
         chessBoard.setBounds(50,75,512,512);
 
-
         button = new JButton();
         button.setText("Submit");
         button.setBounds(800,0,100,100);
         button.addActionListener(this);
-
-
-
 
 
         startingTextField = new JTextField();
@@ -264,6 +262,49 @@ public class Interface extends JFrame implements ActionListener {
         menu2 = new CustomizeMenu(2);
         menu2.setBounds(260,10,240,350);
 
+        taskBar1 = new JPanel();
+        taskBar1.setBounds(50,20,250,40);
+        taskBar1.setBackground(Color.GRAY);
+
+        avatar1 = new JLabel();
+        avatar1.setBounds(0,0,40,40);
+        Image avatarImage1 = menu1.avatarIcon.getImage();
+        avatarImage1 = avatarImage1.getScaledInstance(40,40,5);
+        avatar1.setIcon(new ImageIcon(avatarImage1));
+
+
+        name1 = new JLabel(menu1.name.getText());
+        name1.setBounds(120,0,80,40);
+        name1.setForeground(Color.WHITE);
+        name1.setFont(new Font("Comic Sans", Font.BOLD, 15));
+
+
+        taskBar1.add(avatar1);
+        taskBar1.add(name1);
+
+
+        taskBar2 = new JPanel();
+        taskBar2.setBounds(50,600,250,40);
+        taskBar2.setBackground(Color.GRAY);
+
+        avatar2 = new JLabel();
+        avatar2.setBounds(0,0,40,40);
+        Image avatarImage2 = menu2.avatarIcon.getImage();
+        avatarImage2 = avatarImage2.getScaledInstance(40,40,5);
+        avatar2.setIcon(new ImageIcon(avatarImage2));
+
+
+        name2 = new JLabel(menu2.name.getText());
+        name2.setBounds(120,0,80,40);
+        name2.setForeground(Color.WHITE);
+        name2.setFont(new Font("Comic Sans", Font.BOLD, 15));
+
+        taskBar2.add(avatar2);
+        taskBar2.add(name2);
+
+
+
+
         changeTheme = new JButton("Change Theme");
         changeTheme.setBounds(55,380,400,50);
         changeTheme.setBackground(new Color(102, 182, 220));
@@ -291,6 +332,8 @@ public class Interface extends JFrame implements ActionListener {
         //this.add(button);
         this.add(AfftimerB);
         this.add(AfftimerW);
+        this.add(taskBar1);
+        this.add(taskBar2);
         this.setVisible(true);
 
 
