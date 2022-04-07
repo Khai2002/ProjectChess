@@ -3,12 +3,14 @@ package gui;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class ChessTime {
     public int minute;
     public int seconde;
     public Timer Mytimer;
     public WindowTheEnd FinDeLaPartie;
     private TimerTask task;
+    boolean paused;
 
     public ChessTime(int m, int s) {
         minute = m;
@@ -16,25 +18,29 @@ public class ChessTime {
         Mytimer = new Timer();
 
 
-
         this.task = new TimerTask() {
             int counter = seconde;
 
             public void run() {
-                if (counter > 0) {
-                    counter--;
-                    seconde = counter;
-                    System.out.println("" + minute + " " + seconde);
-                } else {
-                    if (counter == 0 && minute != 0) {
-                        minute--;
-                        counter = 59;
-                        seconde = 59;
-                        System.out.println("" +minute +" " + seconde);
+                if (paused == true) {
+
+                }
+                else {
+                    if (counter > 0) {
+                        counter--;
+                        seconde = counter;
+                        System.out.println("" + minute + " " + seconde);
                     } else {
-                        FinDeLaPartie = new WindowTheEnd();
-                        FinDeLaPartie.setVisible(true);
-                        Mytimer.cancel();
+                        if (counter == 0 && minute != 0) {
+                            minute--;
+                            counter = 59;
+                            seconde = 59;
+                            System.out.println("" +minute +" " + seconde);
+                        } else {
+                            FinDeLaPartie = new WindowTheEnd();
+                            FinDeLaPartie.setVisible(true);
+                            Mytimer.cancel();
+                        }
                     }
                 }
             }
@@ -44,10 +50,16 @@ public class ChessTime {
 
     public void start() {
         Mytimer.scheduleAtFixedRate(this.task, 0, 1000);
+        this.paused=false;
     }
+
+    public void restart() {
+        this.paused=false;
+    }
+
     
     public void freezetime() {
-        Mytimer.stop();
+        this.paused = true;
     }
 
     public static void main(String[] args) {
