@@ -57,7 +57,7 @@ public class ChessTime {
         this.paused=false;
     }
 
-    
+
     public void freezetime() {
         this.paused = true;
     }

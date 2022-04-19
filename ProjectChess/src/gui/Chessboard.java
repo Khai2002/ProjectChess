@@ -323,8 +323,8 @@ public class Chessboard extends JComponent implements MouseListener, ActionListe
             yVelocity *= -1;
         }
 
-        xVelocity *= 8;
-        yVelocity *= 8;
+        xVelocity *= 4;
+        yVelocity *= 4;
 
 
         this.pieceIconType = pieceIcons[board.previousMove.piece.id + 6];
