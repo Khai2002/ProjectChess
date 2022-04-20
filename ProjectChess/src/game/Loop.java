@@ -79,7 +79,6 @@ public class Loop {
                 } while (whileCondition);
                 whileCondition = true;
                 this.listBoard.add(new Board(newBoard, whitemove, true,0));
-                System.out.println(this.listBoard.get(this.listBoard.size()-1).notation);
                 count++;
             }
 
@@ -117,7 +116,6 @@ public class Loop {
                     }
                 } while (whileCondition);
                 this.listBoard.add(new Board(newBoard, blackmove, true,0));
-                System.out.println(this.listBoard.get(this.listBoard.size()-1).notation);
                 count++;
             }
 
@@ -174,7 +172,7 @@ public class Loop {
 
             }else{
 
-                Thread.sleep(1000);
+                Thread.sleep(500);
 
                 Move newMove;
 
@@ -195,6 +193,67 @@ public class Loop {
 
             interFace.history.moves.add(this.listBoard.get(this.listBoard.size()-1).previousMove.toString());
             interFace.updateInterface(this.listBoard.get(this.listBoard.size()-1));
+
+
+
+        }
+    }
+
+
+    public void gameLoopHumanMachineBetter(Board board, Interface interFace, Player whitePlayer, Player blackPlayer) throws InterruptedException {
+
+        boolean isWhiteHuman;
+        boolean isBlackHuman;
+
+        if(whitePlayer instanceof Engine){
+            isWhiteHuman = false;
+        }else{
+            isWhiteHuman = true;
+        }
+
+        if(blackPlayer instanceof  Engine){
+            isBlackHuman = false;
+        }else{
+            isBlackHuman = true;
+        }
+
+        while(this.gameEnd(board) == 99){
+
+            int currentActiveColor = board.colorActive;
+
+            if((currentActiveColor == 1 && isWhiteHuman) ||
+                    (currentActiveColor == -1 && isBlackHuman)){
+
+                while(interFace.chessBoard.definedMove == null){
+                    System.out.print("");
+                }
+
+                board = new Board(board, interFace.chessBoard.definedMove,true,0);
+                interFace.chessBoard.definedMove = null;
+
+            }else{
+
+                Thread.sleep(1000);
+
+                Move newMove;
+
+                if(currentActiveColor == 1){
+                    newMove = ((Engine) whitePlayer).engineChoose(board);
+                    //int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).whiteMoves.size()));
+                    //newMove = this.listBoard.get(this.listBoard.size()-1).whiteMoves.get(randomChoice);
+                }else{
+                    newMove = ((Engine) blackPlayer).engineChoose(board);
+                    //int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).blackMoves.size()));
+                    //newMove = this.listBoard.get(this.listBoard.size()-1).blackMoves.get(randomChoice);
+                }
+
+
+                board = new Board(board, newMove,true,0);
+            }
+
+
+            interFace.history.moves.add(board.previousMove.toString());
+            interFace.updateInterface(board);
 
 
 

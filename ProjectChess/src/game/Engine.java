@@ -88,6 +88,10 @@ public class Engine extends Player{
 
                 temp ++;
             }
+
+            //board.nextBoardSet = null;
+        }else{
+            board.treeStateEvaluation = board.boardStateEvaluation;
         }
 
         return counter;
