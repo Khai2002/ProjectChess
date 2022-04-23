@@ -425,7 +425,7 @@ public class Interface extends JFrame implements ActionListener {
             startingInput = startingTextField.getText();
             destinationInput = destinationTextField.getText();
             buttonActivated = true;
-        }else if(e.getSource() == BJouer && !this.chessBoard.isInGame){
+        }else if(e.getSource() == BJouer && !this.chessBoard.isInGame) {
             System.out.println("Fart");
             this.chessBoard.isInGame = true;
             this.menu1.isInGame = true;
@@ -434,11 +434,11 @@ public class Interface extends JFrame implements ActionListener {
             this.menu2.checkForAvatar.stop();
             this.timerUpdate.start();
 
-            if(timer1==null){
-                timer1 = new ChessTime(1, 0);
+            if (timer1 == null) {
+                timer1 = new ChessTime(0, 15);
             }
-            if(timer2==null){
-                timer2 = new ChessTime(1,0);
+            if (timer2 == null) {
+                timer2 = new ChessTime(0, 15);
             }
 
             timer2.start();
@@ -448,24 +448,31 @@ public class Interface extends JFrame implements ActionListener {
             TempPartie.setEditable(false);
 
             Image avatarImage1 = menu1.avatarIcon.getImage();
-            avatarImage1 = avatarImage1.getScaledInstance(32,32,Image.SCALE_AREA_AVERAGING);
+            avatarImage1 = avatarImage1.getScaledInstance(32, 32, Image.SCALE_AREA_AVERAGING);
             avatar1.setIcon(new ImageIcon(avatarImage1));
 
             name1.setText(menu1.name.getText());
 
             Image avatarImage2 = menu2.avatarIcon.getImage();
-            avatarImage2 = avatarImage2.getScaledInstance(32,32,Image.SCALE_AREA_AVERAGING);
+            avatarImage2 = avatarImage2.getScaledInstance(32, 32, Image.SCALE_AREA_AVERAGING);
             avatar2.setIcon(new ImageIcon(avatarImage2));
 
             name2.setText(menu2.name.getText());
 
         }else if(e.getSource() == timerUpdate){
-            if ((timer1.seconde > 10) || (timer2.seconde > 10)) {
+            if ((timer1.seconde >= 10 ) || (timer2.seconde >= 10 )) {
                 TimerB.setText(timer1.minute + ":" + timer1.seconde);
                 TimerW.setText(timer2.minute + ":" + timer2.seconde);
-            } else if ((timer1.seconde < 10) || (timer2.seconde < 10)) {
+            } else if ((timer1.seconde < 10) || (timer2.seconde < 10))  {
                 TimerB.setText(timer1.minute + ":0" + timer1.seconde);
                 TimerW.setText(timer2.minute + ":0" + timer2.seconde);
+            }
+            if ((timer1.minute == 0 && timer1.seconde == 0) || (timer2.minute == 0 && timer2.seconde == 0)) {
+                this.chessBoard.isInGame = false;
+            }
+            if ((timer1.minute == 0 && timer1.seconde < 0) || (timer2.minute == 0 && timer2.seconde < 0))  {
+                timer1.freezetime();
+                timer2.freezetime();
             }
         }
 

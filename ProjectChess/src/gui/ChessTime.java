@@ -10,6 +10,7 @@ public class ChessTime {
     public Timer Mytimer;
     public WindowTheEnd FinDeLaPartie;
     private TimerTask task;
+    public Chessboard chessboard;
     boolean paused;
 
     public ChessTime(int m, int s) {

@@ -15,7 +15,7 @@ public class WindowTheEnd extends JFrame {
         fond.setSize(1000, 1000);
         this.add(fond);
 
-        JLabel TheText = new JLabel("Time up ! DRAW o_o");
+        JLabel TheText = new JLabel("Time up ! Lose o_o");
         TheText.setForeground(Color.BLACK);
         TheText.setBackground(Color.WHITE);
         TheText.setBounds(500, 300, 200, 100);
