@@ -435,10 +435,10 @@ public class Interface extends JFrame implements ActionListener {
             this.timerUpdate.start();
 
             if (timer1 == null) {
-                timer1 = new ChessTime(0, 15);
+                timer1 = new ChessTime(1, 0);
             }
             if (timer2 == null) {
-                timer2 = new ChessTime(0, 15);
+                timer2 = new ChessTime(1, 0);
             }
 
             timer2.start();
