@@ -3,6 +3,7 @@ package game;
 import java.util.Scanner;
 import board.Board;
 import gui.Interface;
+import gui.WindowTheEnd;
 import move.*;
 //import piece.*;
 import board.*;
@@ -43,7 +44,7 @@ public class Loop {
     // Luc choi ghi trong main
     // Loop.gameLoop(board)
 
-    public void gameLoop(Board board, Scanner sc){
+    public void gameLoop(Board board, Scanner sc) throws Exception{
         this.listBoard.add(board);
         int count = 0;
         boolean whileCondition = true;
@@ -122,7 +123,7 @@ public class Loop {
         }
     }
 
-    public void gameLoopInterface(Board board, Interface interFace){
+    public void gameLoopInterface(Board board, Interface interFace) throws Exception{
         this.listBoard.add(board);
 
         while(this.gameEnd(this.listBoard.get(this.listBoard.size()-1)) == 99){
@@ -138,7 +139,7 @@ public class Loop {
         }
     }
 
-    public void gameLoopHumanMachine(Board board, Interface interFace, Player whitePlayer, Player blackPlayer) throws InterruptedException {
+    public void gameLoopHumanMachine(Board board, Interface interFace, Player whitePlayer, Player blackPlayer) throws Exception {
 
         this.listBoard.add(board);
         boolean isWhiteHuman;
@@ -200,29 +201,20 @@ public class Loop {
     }
 
 
-    public void gameLoopHumanMachineBetter(Board board, Interface interFace, Player whitePlayer, Player blackPlayer) throws InterruptedException {
+    public void gameLoopHumanMachineBetter(Board board, Interface interFace) throws Exception {
 
-        boolean isWhiteHuman;
-        boolean isBlackHuman;
+        int winner = -1;
 
-        if(whitePlayer instanceof Engine){
-            isWhiteHuman = false;
-        }else{
-            isWhiteHuman = true;
-        }
-
-        if(blackPlayer instanceof  Engine){
-            isBlackHuman = false;
-        }else{
-            isBlackHuman = true;
+        while(!interFace.chessBoard.isInGame){
+            System.out.print("");
         }
 
         while(this.gameEnd(board) == 99){
 
             int currentActiveColor = board.colorActive;
 
-            if((currentActiveColor == 1 && isWhiteHuman) ||
-                    (currentActiveColor == -1 && isBlackHuman)){
+            if((currentActiveColor == 1 && interFace.player1 instanceof Human) ||
+                    (currentActiveColor == -1 && interFace.player2 instanceof Human)){
 
                 while(interFace.chessBoard.definedMove == null){
                     System.out.print("");
@@ -238,25 +230,32 @@ public class Loop {
                 Move newMove;
 
                 if(currentActiveColor == 1){
-                    newMove = ((Engine) whitePlayer).engineChoose(board);
-                    //int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).whiteMoves.size()));
-                    //newMove = this.listBoard.get(this.listBoard.size()-1).whiteMoves.get(randomChoice);
+                    newMove = ((Engine) interFace.player1).engineChoose(board);
                 }else{
-                    newMove = ((Engine) blackPlayer).engineChoose(board);
-                    //int randomChoice = (int) (Math.random()*(this.listBoard.get(this.listBoard.size()-1).blackMoves.size()));
-                    //newMove = this.listBoard.get(this.listBoard.size()-1).blackMoves.get(randomChoice);
+                    newMove = ((Engine) interFace.player2).engineChoose(board);
                 }
 
 
                 board = new Board(board, newMove,true,0);
             }
 
-
             interFace.history.moves.add(board.previousMove.toString());
+
+            while(interFace.history.moves.size()>30){
+                interFace.history.moves.removeFirst();
+                interFace.history.moves.removeFirst();
+                interFace.history.index+=1;
+            }
+
             interFace.updateInterface(board);
 
+            winner *= -1;
+        }
 
-
+        if(winner==1){
+            new WindowTheEnd("White wins");
+        }else{
+            new WindowTheEnd("Black wins");
         }
     }
 

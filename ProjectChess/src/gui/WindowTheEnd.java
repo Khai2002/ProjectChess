@@ -5,7 +5,9 @@ import java.awt.*;
 import javax.swing.ImageIcon;
 
 public class WindowTheEnd extends JFrame {
-    public WindowTheEnd() {
+    JLabel text;
+
+    public WindowTheEnd(String insert) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(600, 430);
         this.setResizable(false);
@@ -15,12 +17,12 @@ public class WindowTheEnd extends JFrame {
         fond.setSize(1000, 1000);
         this.add(fond);
 
-        JLabel TheText = new JLabel("Time up ! Lose o_o");
-        TheText.setForeground(Color.BLACK);
-        TheText.setBackground(Color.WHITE);
-        TheText.setBounds(500, 300, 200, 100);
-        TheText.setFont(new Font("Comic Sans",Font.BOLD,48));
-        fond.add(TheText);
+        text = new JLabel(insert);
+        text.setForeground(Color.BLACK);
+        text.setBackground(Color.WHITE);
+        text.setBounds(500, 300, 200, 100);
+        text.setFont(new Font("Comic Sans",Font.BOLD,48));
+        fond.add(text);
 
         JLabel monEtiquette  = new JLabel(new ImageIcon("res/Egalite.png"));
         monEtiquette.setSize(600, 430);
@@ -29,6 +31,6 @@ public class WindowTheEnd extends JFrame {
         this.setVisible(true);
     }
     public static void main(String[] args){
-        new WindowTheEnd();
+        new WindowTheEnd("Time up ! DRAW o_o");
     }
 }

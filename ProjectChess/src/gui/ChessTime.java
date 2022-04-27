@@ -7,19 +7,21 @@ import java.util.TimerTask;
 public class ChessTime {
     public int minute;
     public int seconde;
+    public int color;
     public Timer Mytimer;
     public WindowTheEnd FinDeLaPartie;
     private TimerTask task;
-    public Chessboard chessboard;
     boolean paused;
 
-    public ChessTime(int m, int s) {
+    public ChessTime(int m, int s, int color) {
         minute = m;
         seconde = s;
+        this.color = color;
         Mytimer = new Timer();
 
 
         this.task = new TimerTask() {
+            int theColor = color;
             int counter = seconde;
 
             public void run() {
@@ -38,8 +40,11 @@ public class ChessTime {
                             seconde = 59;
                             System.out.println("" +minute +" " + seconde);
                         } else {
-                            FinDeLaPartie = new WindowTheEnd();
-                            FinDeLaPartie.setVisible(true);
+                            if(theColor == 1){
+                                FinDeLaPartie = new WindowTheEnd("Time up ! Black Wins");
+                            }else{
+                                FinDeLaPartie = new WindowTheEnd("Time up ! White Wins");
+                            }
                             Mytimer.cancel();
                         }
                     }
@@ -64,7 +69,7 @@ public class ChessTime {
     }
 
     public static void main(String[] args) {
-        ChessTime time = new ChessTime(0, 10);
+        ChessTime time = new ChessTime(0, 10,1);
         time.start();
     }
 }

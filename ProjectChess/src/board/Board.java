@@ -20,7 +20,7 @@ public class Board implements Serializable, Comparable<Board> {
     public static final String testFEN = "8/8/8/6rk/6P1/6P1/8/8 b KQkq - 0 1";
     public static final String test2FEN = "1r2kr2/pp1p1p2/2p4p/6pP/P1PP4/1P6/5PP1/R3K2R w KQ g6 0 21";
     public static final String failSaveFEN = "nnnnnnnn/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    public static final String checkmateFEN = "7Q/6R1/8/7k/8/8/8/8 b - - 0 1";
+    public static final String checkmateFEN = "rnbqkbnr/pppp1ppp/4p3/8/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq - 0 1";
     public static final String stalemateFEN = "8/8/q7/4K3/7q/8/8/3q1q2 w - - 0 1";
     public static final String weirdPositionFEN = "8/8/1R6/7K/8/8/1r6/1k4r1 b - - 0 1";
     public static final String pawnDebugFEN = "8/6p1/8/8/8/8/1P6/8 w - - 0 1";
@@ -29,6 +29,9 @@ public class Board implements Serializable, Comparable<Board> {
     public static final String enPassantInitFEN = "1r2kr2/pp1p1pp1/2p4p/7P/P1PP4/1P6/5PP1/R3K2R b KQ - 0 20";
     public static final String promotionFEN = "r1bqkbnr/pPpppppp/8/8/8/8/8/4K3 w kq - 0 1";
     public static final String ambitiousFEN = "rnbqkbnr/pppppppp/8/8/8/2N3N1/PPPPPPPP/R1BQKB1R w KQkq - 0 1";
+    public static final String checkmateFEN2 = "rnbqkbnr/pppp1ppp/4p3/8/8/5P2/PPPPP1PP/RNBQKBNR w KQkq - 0 1";
+    public static final String checkmateFEN3 = "7k/5ppp/8/8/8/8/8/R3B2K w Q - 0 1";
+
 
     // Local Attributes ====================================================== //
 
@@ -74,7 +77,7 @@ public class Board implements Serializable, Comparable<Board> {
     // Attributes for engine
     public int searchDepth;
     public double boardStateEvaluation;
-    public double treeStateEvaluation = 696969;
+    public double treeStateEvaluation = 999;
     public Move optiMalMove;
     public TreeSet<Board> nextBoardSet = new TreeSet<>();
 
@@ -135,13 +138,11 @@ public class Board implements Serializable, Comparable<Board> {
 
         move.board = this;
 
+
         // Previous state of Board and Move
         this.previousBoard = previousBoard;
         this.previousMove = move;
 
-        if(eliminateMove){
-            //System.out.println(this.previousMove.type);
-        }
 
         // Creating En Passant Square
         if(this.previousMove.piece instanceof Pawn &&
@@ -158,6 +159,7 @@ public class Board implements Serializable, Comparable<Board> {
 
 
         this.colorActive = this.previousBoard.colorActive * (-1);
+
 
         if(this.previousBoard.colorActive == -1){
             this.fullMoveCounter ++;
@@ -462,21 +464,12 @@ public class Board implements Serializable, Comparable<Board> {
     public void checkCastleAvailable(int color){
 
         int row;
-        boolean tileInDanger;
 
         if(color == 1){
             row = 7;
-            if(this.castleAvailable[0]){
-                this.castleCurrentAvailable[0] = true;
-            }else{
-                this.castleCurrentAvailable[0] = false;
-            }
+            this.castleCurrentAvailable[0] = this.castleAvailable[0];
 
-            if(this.castleAvailable[1]){
-                this.castleCurrentAvailable[1] = true;
-            }else{
-                this.castleCurrentAvailable[1] = false;
-            }
+            this.castleCurrentAvailable[1] = this.castleAvailable[1];
 
             if(this.castleAvailable[0]){
                 Move newMove = new Move(board[7][4].pieceOnTile, board[7][7].pieceOnTile,board[7][4], board[7][6], board[7][7], board[7][5]);
@@ -529,17 +522,9 @@ public class Board implements Serializable, Comparable<Board> {
 
         }else{
             row = 0;
-            if(this.castleAvailable[2]){
-                this.castleCurrentAvailable[2] = true;
-            }else{
-                this.castleCurrentAvailable[2] = false;
-            }
+            this.castleCurrentAvailable[2] = this.castleAvailable[2];
 
-            if(this.castleAvailable[3]){
-                this.castleCurrentAvailable[3] = true;
-            }else{
-                this.castleCurrentAvailable[3] = false;
-            }
+            this.castleCurrentAvailable[3] = this.castleAvailable[3];
 
             if(this.castleAvailable[2]){
                 Move newMove = new Move(board[0][4].pieceOnTile, board[0][7].pieceOnTile,board[0][4], board[0][6], board[0][7], board[0][5]);
@@ -811,7 +796,17 @@ public class Board implements Serializable, Comparable<Board> {
             return_value -= piece.value;
         }
 
-        return return_value + Math.random();
+        if(this.isWhiteInCheckMate){
+            return -999;
+        }else if(this.isBlackInCheckMate){
+            return 999;
+        }else if(this.isBlackInStaleMate || this.isWhiteInStaleMate){
+            return 0;
+        }else{
+            return return_value + Math.random();
+        }
+
+
     }
 
     // Print out chess board

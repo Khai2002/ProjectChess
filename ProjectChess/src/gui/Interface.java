@@ -1,5 +1,8 @@
 package gui;
 import board.Board;
+import game.Engine;
+import game.Human;
+import game.Player;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,6 +15,9 @@ public class Interface extends JFrame implements ActionListener {
 
     public Chessboard chessBoard;
     public History history;
+
+    public Player player1;
+    public Player player2;
 
 
     JButton button;
@@ -31,6 +37,8 @@ public class Interface extends JFrame implements ActionListener {
     public JButton StyleChessBoard;
     private JComboBox TempPartie;
     public Object[] ElementsTempPartie;
+    public JButton gameMode;
+    public JButton blackOrWhite;
     public JTextField Recherche;
     public JTextField RechercheJ;
     public JPanel Page1;
@@ -68,7 +76,7 @@ public class Interface extends JFrame implements ActionListener {
 
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException{
         Board board = new Board(Board.startFEN);
         new Interface(board);
     }
@@ -79,6 +87,9 @@ public class Interface extends JFrame implements ActionListener {
         history = new History();
 
         timerUpdate = new Timer(500,this);
+
+        player1 = new Human();
+        player2 = new Engine(3);
 
 
 
@@ -184,15 +195,36 @@ public class Interface extends JFrame implements ActionListener {
         //Création JComboBox
         ElementsTempPartie = new Object[] {"1 min", "3 min", "5 min", "10 min"};
         TempPartie = new JComboBox<>(ElementsTempPartie);
-        TempPartie.setBounds(70, 192, 370, 50);
+        TempPartie.setBounds(70, 222, 370, 50);
         TempPartie.setFont(new Font("Comics Sans",Font.BOLD,18));
         TempPartie.setFocusable(false);
         Page1.add(TempPartie);
         TempPartie.addActionListener(this);
 
+        // Game Mode
+        blackOrWhite = new JButton("White");
+        blackOrWhite.setBackground(new Color(224, 224, 224));
+        blackOrWhite.setForeground(new Color(71, 71, 71));
+        blackOrWhite.setBounds(340,155,100,50);
+        blackOrWhite.setFont(new Font("Comics Sans",Font.BOLD,18));
+        blackOrWhite.setFocusable(false);
+        Page1.add(blackOrWhite);
+        blackOrWhite.addActionListener(this);
+
+        gameMode = new JButton("Player vs Computer");
+        gameMode.setForeground(new Color(224, 224, 224));
+        gameMode.setBackground(new Color(71, 71, 71));
+        gameMode.setBounds(70,155,260,50);
+        gameMode.setFont(new Font("Comics Sans",Font.BOLD,18));
+        gameMode.setFocusable(false);
+        Page1.add(gameMode);
+        gameMode.addActionListener(this);
+
+
+
         //Bouton "Jouer"
         BJouer = new JButton("PLAY");
-        BJouer.setBounds(70, 256, 370, 50);
+        BJouer.setBounds(70, 286, 370, 50);
         BJouer.setFont(new Font("Comic Sans", Font.BOLD, 20));
         BJouer.setBackground(new Color(71, 71, 71));
         BJouer.setForeground(new Color(224, 224, 224));
@@ -205,7 +237,7 @@ public class Interface extends JFrame implements ActionListener {
         //StyleChessBoard.addActionListener(this); //à implémenter dans actionPerformed()
         //Page1.add(StyleChessBoard);
 
-        Page1.setVisible(true);
+        Page1.setVisible(false);
 
 
         //PParties, à modifier la colonne?
@@ -240,7 +272,7 @@ public class Interface extends JFrame implements ActionListener {
 
         Color page2Color = new Color(224, 224, 224);
 
-        history.setBounds(55,55,350,200);
+        history.setBounds(55,55,350,400);
         history.setBackground(page2Color);
 
         Page2 = new JPanel();
@@ -252,8 +284,8 @@ public class Interface extends JFrame implements ActionListener {
         //Recherche match en cours
         Recherche = new JTextField("Rechercher");
         //Page2.add(Recherche);
-        Page2.add(draw);
-        Page2.add(resign);
+        //Page2.add(draw);
+        //Page2.add(resign);
         Page2.add(history);
         Page2.repaint();
         Page2.setVisible(false);
@@ -346,7 +378,14 @@ public class Interface extends JFrame implements ActionListener {
         Page3.add(changeTheme);
         Page3.add(changeLanguage);
         Page3.add(currentLanguage);
-        Page3.setVisible(false);
+        Page3.setVisible(true);
+
+        ChoixPage1.setBackground(new Color(34, 32, 32));
+        ChoixPage1.setForeground(new Color(233, 233, 233));
+        ChoixPage2.setBackground(new Color(34, 32, 32));
+        ChoixPage2.setForeground(new Color(233, 233, 233));
+        ChoixPage3.setBackground(new Color(233, 233, 233));
+        ChoixPage3.setForeground(new Color(34, 32, 32));
 
 
         this.add(chessBoard);
@@ -364,6 +403,56 @@ public class Interface extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        //Page 1 Actions
+        if(!this.chessBoard.isInGame){
+            if(e.getSource() == gameMode){
+                if(gameMode.getText().equals("Player vs Computer")){
+                    gameMode.setText("Player vs Player");
+                    blackOrWhite.setVisible(false);
+                }else if(gameMode.getText().equals("Joueur vs Ordinateur")){
+                    gameMode.setText("Joueur vs Joueur");
+                    blackOrWhite.setVisible(false);
+                }else if(gameMode.getText().equals("プレーヤーvsエンジン")){
+                    gameMode.setText("プレイヤーvsプレイヤー");
+                    blackOrWhite.setVisible(false);
+                }else if(gameMode.getText().equals("Joueur vs Joueur")){
+                    gameMode.setText("Joueur vs Ordinateur");
+                    blackOrWhite.setVisible(true);
+                }else if(gameMode.getText().equals("プレイヤーvsプレイヤー")){
+                    gameMode.setText("プレーヤーvsエンジン");
+                    blackOrWhite.setVisible(true);
+                }else{
+                    gameMode.setText("Player vs Computer");
+                    blackOrWhite.setVisible(true);
+                }
+            }else if(e.getSource() == blackOrWhite){
+                if(blackOrWhite.getText().equals("Black")){
+                    blackOrWhite.setText("White");
+                    blackOrWhite.setForeground(new Color(71, 71, 71));
+                    blackOrWhite.setBackground(new Color(224,224,224));
+                }else if(blackOrWhite.getText().equals("Noir")){
+                    blackOrWhite.setText("Blanc");
+                    blackOrWhite.setForeground(new Color(71, 71, 71));
+                    blackOrWhite.setBackground(new Color(224,224,224));
+                }else if(blackOrWhite.getText().equals("黒")){
+                    blackOrWhite.setText("白");
+                    blackOrWhite.setForeground(new Color(71, 71, 71));
+                    blackOrWhite.setBackground(new Color(224,224,224));
+                }else if(blackOrWhite.getText().equals("Blanc")){
+                    blackOrWhite.setText("Noir");
+                    blackOrWhite.setBackground(new Color(71, 71, 71));
+                    blackOrWhite.setForeground(new Color(224,224,224));
+                }else if(blackOrWhite.getText().equals("白")){
+                    blackOrWhite.setText("黒");
+                    blackOrWhite.setBackground(new Color(71, 71, 71));
+                    blackOrWhite.setForeground(new Color(224,224,224));
+                }else{
+                    blackOrWhite.setText("Black");
+                    blackOrWhite.setBackground(new Color(71, 71, 71));
+                    blackOrWhite.setForeground(new Color(224,224,224));
+                }
+            }
+        }
 
         // Page 3 Actions
         if(e.getSource() == changeTheme){
@@ -383,6 +472,16 @@ public class Interface extends JFrame implements ActionListener {
             currentLanguage.setText(languageList[languageChoice]);
 
             if(languageChoice == 0){
+                if(gameMode.getText().equals("プレイヤーvsプレイヤー")){
+                    gameMode.setText("Player vs Player");
+                }else{
+                    gameMode.setText("Player vs Computer");
+                }
+                if(blackOrWhite.getText().equals("白")){
+                    blackOrWhite.setText("White");
+                }else{
+                    blackOrWhite.setText("Black");
+                }
                 changeTheme.setText("Change Theme");
                 changeLanguage.setText("Change Language");
                 ChoixPage1.setText("NEW");
@@ -395,6 +494,16 @@ public class Interface extends JFrame implements ActionListener {
                 menu1.label.setText("Player " + menu1.player);
                 menu2.label.setText("Player " + menu2.player);
             }else if(languageChoice == 1){
+                if(gameMode.getText().equals("Player vs Player")){
+                    gameMode.setText("Joueur vs Joueur");
+                }else{
+                    gameMode.setText("Joueur vs Ordinateur");
+                }
+                if(blackOrWhite.getText().equals("White")){
+                    blackOrWhite.setText("Blanc");
+                }else{
+                    blackOrWhite.setText("Noir");
+                }
                 changeTheme.setText("Change de Theme");
                 changeLanguage.setText("Change de Langue");
                 ChoixPage1.setText("NOUVEAU");
@@ -407,6 +516,16 @@ public class Interface extends JFrame implements ActionListener {
                 menu1.label.setText("Joueur " + menu1.player);
                 menu2.label.setText("Joueur " + menu2.player);
             }else if(languageChoice == 2){
+                if(gameMode.getText().equals("Joueur vs Joueur")){
+                    gameMode.setText("プレイヤーvsプレイヤー");
+                }else{
+                    gameMode.setText("プレーヤーvsエンジン");
+                }
+                if(blackOrWhite.getText().equals("Blanc")){
+                    blackOrWhite.setText("白");
+                }else{
+                    blackOrWhite.setText("黒");
+                }
                 changeTheme.setText("テーマを変更する");
                 changeLanguage.setText("言語を変更する");
                 ChoixPage1.setText("新着");
@@ -425,8 +544,36 @@ public class Interface extends JFrame implements ActionListener {
             startingInput = startingTextField.getText();
             destinationInput = destinationTextField.getText();
             buttonActivated = true;
-        }else if(e.getSource() == BJouer && !this.chessBoard.isInGame) {
-            System.out.println("Fart");
+
+        }else if(e.getSource() == BJouer && !this.chessBoard.isInGame){
+
+            if(     gameMode.getText().equals("Player vs Player") ||
+                    gameMode.getText().equals("Joueur vs Joueur") ||
+                    gameMode.getText().equals("プレイヤーvsプレイヤー")
+            ){
+                player1 = new Human();
+                player2 = new Human();
+            }else{
+                if(     blackOrWhite.getText().equals("White") ||
+                        blackOrWhite.getText().equals("Blanc") ||
+                        blackOrWhite.getText().equals("白") ){
+                    player1 = new Human();
+                    player2 = new Engine(3);
+                }else{
+                    player1 = new Engine(3);
+                    player2 = new Human();
+                }
+            }
+            Page1.setVisible(false);
+            Page2.setVisible(true);
+            Page3.setVisible(false);
+            ChoixPage1.setBackground(new Color(34, 32, 32));
+            ChoixPage1.setForeground(new Color(233, 233, 233));
+            ChoixPage2.setBackground(new Color(233, 233, 233));
+            ChoixPage2.setForeground(new Color(34, 32, 32));
+            ChoixPage3.setBackground(new Color(34, 32, 32));
+            ChoixPage3.setForeground(new Color(233, 233, 233));
+
             this.chessBoard.isInGame = true;
             this.menu1.isInGame = true;
             this.menu2.isInGame = true;
@@ -434,11 +581,11 @@ public class Interface extends JFrame implements ActionListener {
             this.menu2.checkForAvatar.stop();
             this.timerUpdate.start();
 
-            if (timer1 == null) {
-                timer1 = new ChessTime(1, 0);
+            if(timer1==null){
+                timer1 = new ChessTime(1, 0, -1);
             }
-            if (timer2 == null) {
-                timer2 = new ChessTime(1, 0);
+            if(timer2==null){
+                timer2 = new ChessTime(1,0,1);
             }
 
             timer2.start();
@@ -448,31 +595,24 @@ public class Interface extends JFrame implements ActionListener {
             TempPartie.setEditable(false);
 
             Image avatarImage1 = menu1.avatarIcon.getImage();
-            avatarImage1 = avatarImage1.getScaledInstance(32, 32, Image.SCALE_AREA_AVERAGING);
+            avatarImage1 = avatarImage1.getScaledInstance(32,32,Image.SCALE_AREA_AVERAGING);
             avatar1.setIcon(new ImageIcon(avatarImage1));
 
             name1.setText(menu1.name.getText());
 
             Image avatarImage2 = menu2.avatarIcon.getImage();
-            avatarImage2 = avatarImage2.getScaledInstance(32, 32, Image.SCALE_AREA_AVERAGING);
+            avatarImage2 = avatarImage2.getScaledInstance(32,32,Image.SCALE_AREA_AVERAGING);
             avatar2.setIcon(new ImageIcon(avatarImage2));
 
             name2.setText(menu2.name.getText());
 
         }else if(e.getSource() == timerUpdate){
-            if ((timer1.seconde >= 10 ) || (timer2.seconde >= 10 )) {
+            if ((timer1.seconde > 10) || (timer2.seconde > 10)) {
                 TimerB.setText(timer1.minute + ":" + timer1.seconde);
                 TimerW.setText(timer2.minute + ":" + timer2.seconde);
-            } else if ((timer1.seconde < 10) || (timer2.seconde < 10))  {
+            } else if ((timer1.seconde < 10) || (timer2.seconde < 10)) {
                 TimerB.setText(timer1.minute + ":0" + timer1.seconde);
                 TimerW.setText(timer2.minute + ":0" + timer2.seconde);
-            }
-            if ((timer1.minute == 0 && timer1.seconde == 0) || (timer2.minute == 0 && timer2.seconde == 0)) {
-                this.chessBoard.isInGame = false;
-            }
-            if ((timer1.minute == 0 && timer1.seconde < 0) || (timer2.minute == 0 && timer2.seconde < 0))  {
-                timer1.freezetime();
-                timer2.freezetime();
             }
         }
 
@@ -480,29 +620,47 @@ public class Interface extends JFrame implements ActionListener {
             Page1.setVisible(true);
             Page2.setVisible(false);
             Page3.setVisible(false);
+            ChoixPage1.setBackground(new Color(233,233,233));
+            ChoixPage1.setForeground(new Color(34, 32, 32));
+            ChoixPage2.setBackground(new Color(34, 32, 32));
+            ChoixPage2.setForeground(new Color(233, 233, 233));
+            ChoixPage3.setBackground(new Color(34, 32, 32));
+            ChoixPage3.setForeground(new Color(233, 233, 233));
         } else if(e.getSource() == ChoixPage2) {
             Page1.setVisible(false);
             Page2.setVisible(true);
             Page3.setVisible(false);
+            ChoixPage1.setBackground(new Color(34, 32, 32));
+            ChoixPage1.setForeground(new Color(233, 233, 233));
+            ChoixPage2.setBackground(new Color(233, 233, 233));
+            ChoixPage2.setForeground(new Color(34, 32, 32));
+            ChoixPage3.setBackground(new Color(34, 32, 32));
+            ChoixPage3.setForeground(new Color(233, 233, 233));
         } else if(e.getSource() == ChoixPage3) {
             Page1.setVisible(false);
             Page2.setVisible(false);
             Page3.setVisible(true);
+            ChoixPage1.setBackground(new Color(34, 32, 32));
+            ChoixPage1.setForeground(new Color(233, 233, 233));
+            ChoixPage2.setBackground(new Color(34, 32, 32));
+            ChoixPage2.setForeground(new Color(233, 233, 233));
+            ChoixPage3.setBackground(new Color(233, 233, 233));
+            ChoixPage3.setForeground(new Color(34, 32, 32));
         }
         if(e.getSource() == getTempPartie() && !this.chessBoard.isInGame) {
             String temps = (String) getTempPartie().getSelectedItem();
             if (temps == "1 min" || temps == "1分") {
-                timer1 = new ChessTime(1, 0);
-                timer2 = new ChessTime(1, 0);
+                timer1 = new ChessTime(1, 0,-1);
+                timer2 = new ChessTime(1, 0,1);
             } else if (temps == "3 min" || temps == "3分") {
-                timer1 = new ChessTime(3, 0);
-                timer2 = new ChessTime(3, 0);
+                timer1 = new ChessTime(3, 0,-1);
+                timer2 = new ChessTime(3, 0,1);
             } else if (temps == "5 min" || temps == "5分") {
-                timer1 = new ChessTime(5, 0);
-                timer2 = new ChessTime(5, 0);
+                timer1 = new ChessTime(5, 0,-1);
+                timer2 = new ChessTime(5, 0,1);
             } else if (temps == "10 min" || temps == "10分") {
-                timer1 = new ChessTime(10, 0);
-                timer2 = new ChessTime(10, 0);
+                timer1 = new ChessTime(10, 0,-1);
+                timer2 = new ChessTime(10, 0,1);
             }
         }
 
