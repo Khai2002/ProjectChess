@@ -9,16 +9,16 @@ import java.awt.event.WindowListener;
 
 public class CustomizeMenu extends JPanel implements ActionListener{
 
-    int player;
-    JButton avatar;
-    JTextField name;
-    JLabel label;
-    ChooseAvatar chooseAvatar;
-    Timer checkForAvatar;
-    boolean isInGame;
+    public int player;
+    public JButton avatar;
+    public JTextField name;
+    public JLabel label;
+    public ChooseAvatar chooseAvatar;
+    public Timer checkForAvatar;
+    public boolean isInGame;
 
 
-    ImageIcon avatarIcon;
+    public ImageIcon avatarIcon;
 
 
     public CustomizeMenu(int player){

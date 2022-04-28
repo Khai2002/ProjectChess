@@ -1,11 +1,7 @@
 package piece;
 
 import board.Board;
-import board.Tile;
 import move.Move;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class Bishop extends Piece{
 
@@ -36,7 +32,6 @@ public class Bishop extends Piece{
                     coeff ++;
                 }else if(temp == 1){
                     listMove.add(new Move(this,board.board[this.position[0]][this.position[1]],board.board[xCoordinate][yCoordinate]));
-                    coeff ++;
                     break;
                 }else{
                     break;

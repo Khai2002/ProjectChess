@@ -219,13 +219,11 @@ public class Loop {
                 while(interFace.chessBoard.definedMove == null){
                     System.out.print("");
                 }
-
                 board = new Board(board, interFace.chessBoard.definedMove,true,0);
-                interFace.chessBoard.definedMove = null;
 
             }else{
 
-                Thread.sleep(1000);
+                Thread.sleep(700);
 
                 Move newMove;
 
@@ -238,6 +236,7 @@ public class Loop {
 
                 board = new Board(board, newMove,true,0);
             }
+            interFace.chessBoard.definedMove = null;
 
             interFace.history.moves.add(board.previousMove.toString());
 
@@ -263,7 +262,7 @@ public class Loop {
     // Anh dung 1 method check gameEnd
     // Co the cho no return int hoac boolean
     //Game-end condition
-    public int gameEnd(Board board){
+    public static int gameEnd(Board board){
         if (board.isWhiteInCheckMate){
             return 1;
         }else if (board.isBlackInCheckMate){

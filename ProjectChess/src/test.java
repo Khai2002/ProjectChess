@@ -31,9 +31,17 @@ public class test {
         Engine engine2 = new Engine(3);
 
         Loop loop = new Loop();
-        //loop.gameLoop(board,sc);
 
-        loop.gameLoopHumanMachine(board,interFace,human1,engine2);
+        loop.gameLoopHumanMachineBetter(board,interFace);
+
+//        engine2.buildNextSet(board);
+//        for(Board board1: board.nextBoardSet){
+//            System.out.println(board1.treeStateEvaluation + " "+ board1.previousMove);
+//        }
+//
+//        Board newBoard = board.nextBoardSet.first();
+//        newBoard.printBoard();
+//        System.out.println(newBoard.isWhiteInCheckMate);
 
 
 

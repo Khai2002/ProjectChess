@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.Serializable;
 import javax.swing .*;
 
 
@@ -35,7 +36,7 @@ public class Interface extends JFrame implements ActionListener {
     public JButton ChoixPage3;
     public JButton BJouer;
     public JButton StyleChessBoard;
-    private JComboBox TempPartie;
+    public JComboBox TempPartie;
     public Object[] ElementsTempPartie;
     public JButton gameMode;
     public JButton blackOrWhite;

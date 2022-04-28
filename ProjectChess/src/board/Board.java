@@ -200,7 +200,7 @@ public class Board implements Serializable, Comparable<Board> {
 
 
         // Delete Pawn if move type is 1
-        if(move.type == 1){
+        if(move.type == 1 && move.affectedPiece!=null){
             this.board[move.affectedPiece.position[0]][move.affectedPiece.position[1]] = new Tile.EmptyTile(move.affectedPiece.position);
             //System.out.println("Oh yeah" + this.previousMove.affectedPiece.position[0] + this.previousMove.affectedPiece.position[1]);
             this.board[move.affectedPiece.position[0]][move.affectedPiece.position[1]] = new Tile.EmptyTile(move.affectedPiece.position);
