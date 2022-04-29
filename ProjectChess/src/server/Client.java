@@ -50,7 +50,11 @@ public class Client {
 
 
         // Init Board
-        this.color = -1;
+        if(readyOrNot>128){
+            this.color = 1;
+        }else{
+            this.color = -1;
+        }
         board = new Board(Board.startFEN);
         interFace = new Interface(board);
         interFace.setTitle("Chess Client");
@@ -73,10 +77,20 @@ public class Client {
         interFace.timerUpdate.start();
 
         if(interFace.timer1==null){
-            interFace.timer1 = new ChessTime(readyOrNot, 0, -1);
+            if(readyOrNot>128){
+                interFace.timer1 = new ChessTime(256 - readyOrNot, 0, -1);
+            }else{
+                interFace.timer1 = new ChessTime(readyOrNot, 0, -1);
+            }
+
         }
         if(interFace.timer2==null){
-            interFace.timer2 = new ChessTime(readyOrNot,0,1);
+            if(readyOrNot>128){
+                interFace.timer2 = new ChessTime(256 - readyOrNot,0,1);
+            }else{
+                interFace.timer2 = new ChessTime(readyOrNot,0,1);
+            }
+
         }
 
         interFace.timer2.start();

@@ -17,7 +17,7 @@ public class ConnectionWindow extends JFrame implements ActionListener {
 
     public JComboBox TempPartie;
     Object[] ElementsTempPartie;
-    JButton blackOrWhite;
+    public JButton blackOrWhite;
     JButton gameMode;
     JButton BJouer;
     JLabel connection;
@@ -69,7 +69,7 @@ public class ConnectionWindow extends JFrame implements ActionListener {
         //Création JComboBox
         ElementsTempPartie = new Object[] {"1 min", "3 min", "5 min", "10 min"};
         TempPartie = new JComboBox<>(ElementsTempPartie);
-        TempPartie.setBounds(70, 402, 370, 50);
+        TempPartie.setBounds(70, 402, 260, 50);
         TempPartie.setFont(new Font("Comics Sans",Font.BOLD,18));
         TempPartie.setFocusable(false);
         this.add(TempPartie);
@@ -79,20 +79,12 @@ public class ConnectionWindow extends JFrame implements ActionListener {
         blackOrWhite = new JButton("White");
         blackOrWhite.setBackground(new Color(224, 224, 224));
         blackOrWhite.setForeground(new Color(71, 71, 71));
-        blackOrWhite.setBounds(340,335,100,50);
-        blackOrWhite.setFont(new Font("Comics Sans",Font.BOLD,18));
+        blackOrWhite.setBounds(340,402,100,50);
+        blackOrWhite.setFont(new Font("Comics Sans",Font.BOLD,20));
         blackOrWhite.setFocusable(false);
-        //this.add(blackOrWhite);
+        this.add(blackOrWhite);
         blackOrWhite.addActionListener(this);
 
-        gameMode = new JButton("Player vs Computer");
-        gameMode.setForeground(new Color(224, 224, 224));
-        gameMode.setBackground(new Color(71, 71, 71));
-        gameMode.setBounds(70,335,260,50);
-        gameMode.setFont(new Font("Comics Sans",Font.BOLD,18));
-        gameMode.setFocusable(false);
-        //this.add(gameMode);
-        gameMode.addActionListener(this);
 
         //Bouton "Jouer"
         BJouer = new JButton("PLAY");

@@ -59,6 +59,10 @@ public class Server {
 
             String chosenTime = (String) connectionWindow.TempPartie.getSelectedItem();
             int timeControl = Character.getNumericValue(chosenTime.charAt(0));
+            if(connectionWindow.blackOrWhite.getText()=="Black"){
+                timeControl *= -1;
+            }
+
             System.out.println(timeControl);
 
             connectionWindow.dispose();
@@ -66,7 +70,11 @@ public class Server {
             outputStream.flush();
 
             // Init Board
-            this.color = 1;
+            if(connectionWindow.blackOrWhite.getText()=="Black"){
+                this.color = -1;
+            }else{
+                this.color = 1;
+            }
             board = new Board(Board.startFEN);
             interFace = new Interface(board);
             interFace.setTitle("Chess Server");
@@ -89,10 +97,10 @@ public class Server {
             interFace.timerUpdate.start();
 
             if(interFace.timer1==null){
-                interFace.timer1 = new ChessTime(timeControl, 0, -1);
+                interFace.timer1 = new ChessTime(Math.abs(timeControl), 0, -1);
             }
             if(interFace.timer2==null){
-                interFace.timer2 = new ChessTime(timeControl,0,1);
+                interFace.timer2 = new ChessTime(Math.abs(timeControl),0,1);
             }
 
             interFace.timer2.start();
