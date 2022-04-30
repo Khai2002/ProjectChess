@@ -1,10 +1,7 @@
 package server;
 
 import board.Board;
-import gui.ChessTime;
-import gui.ConnectionWindowClient;
-import gui.Interface;
-import gui.WindowTheEnd;
+import gui.*;
 import move.Move;
 import game.Loop;
 
@@ -26,15 +23,27 @@ public class Client {
     int color;
     ConnectionWindowClient connectionWindowClient;
     int readyOrNot = 0;
+    MainMenu mainMenu;
 
 
     public static void main(String[] args) throws Exception {
         new Client("localhost");
     }
 
-    public Client(String ip) throws Exception {
-        // Init Socket
+    public Client(String ip) throws IOException, ClassNotFoundException {
         Socket socket = new Socket(ip, Server.PORT);
+        commonPart(socket);
+    }
+
+    public Client(String ip, MainMenu mainMenu) throws Exception {
+        this.mainMenu = mainMenu;
+        Socket socket = new Socket(ip, Server.PORT);
+        mainMenu.dispose();
+        commonPart(socket);
+    }
+
+    public void commonPart(Socket socket) throws IOException, ClassNotFoundException {
+
 
         ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
