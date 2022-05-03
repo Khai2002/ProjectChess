@@ -141,7 +141,7 @@ public class Engine extends Player{
             for(Board cursor: board.nextBoardSet){
                 cursor.alpha = board.alpha;
                 cursor.beta = board.beta;
-                counter += buildNextSet(cursor);
+                counter += buildNextSetAB(cursor);
 
                 if(temp == 0){
                     System.out.println("hi1");
