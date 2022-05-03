@@ -34,7 +34,10 @@ public class Board implements Serializable, Comparable<Board> {
 
 
     // Local Attributes ====================================================== //
-
+    
+    // AB
+    public double alpha = -9999;
+    public double beta = 9999;
 
     // Variables that connect board to a previous state
     public Board previousBoard;
