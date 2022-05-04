@@ -19,7 +19,7 @@ public class Engine extends Player{
 
         Board engineBoard = new Board(stringBoard);
 
-        this.buildNextSetAB(engineBoard);
+        this.buildNextSetTest(engineBoard);
         return engineBoard.optiMalMove;
     }
 
@@ -34,14 +34,13 @@ public class Engine extends Player{
                     Board newBoard;
                     if(board.searchDepth+1 == this.depth){
                         newBoard = new Board(board, move, false, board.searchDepth + 1);
-                        newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
                         //System.out.println(newBoard.treeStateEvaluation);
 
                     }else{
                         newBoard = new Board(board, move, true, board.searchDepth + 1);
-                        newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
 
                     }
+                    newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
 
                     board.nextBoardSet.add(newBoard);
                     counter ++;
@@ -51,10 +50,10 @@ public class Engine extends Player{
                     Board newBoard;
                     if(board.searchDepth+1 == this.depth){
                         newBoard = new Board(board, move, false, board.searchDepth + 1);
-                        newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
                     }else{
                         newBoard = new Board(board, move, true, board.searchDepth + 1);
                     }
+                    newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
                     board.nextBoardSet.add(newBoard);
                     counter ++;
                 }
@@ -96,7 +95,8 @@ public class Engine extends Player{
 
         return counter;
     }
-    public int buildNextSetAB(Board board){
+
+    public int buildNextSetTest(Board board){
 
         int counter = 0;
 
@@ -107,14 +107,10 @@ public class Engine extends Player{
                     Board newBoard;
                     if(board.searchDepth+1 == this.depth){
                         newBoard = new Board(board, move, false, board.searchDepth + 1);
-                        newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
-                        //System.out.println(newBoard.treeStateEvaluation);
-
                     }else{
                         newBoard = new Board(board, move, true, board.searchDepth + 1);
-                        newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
-
                     }
+                    newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
 
                     board.nextBoardSet.add(newBoard);
                     counter ++;
@@ -124,71 +120,58 @@ public class Engine extends Player{
                     Board newBoard;
                     if(board.searchDepth+1 == this.depth){
                         newBoard = new Board(board, move, false, board.searchDepth + 1);
-                        newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
                     }else{
                         newBoard = new Board(board, move, true, board.searchDepth + 1);
                     }
+                    newBoard.treeStateEvaluation = newBoard.boardStateEvaluation;
+
                     board.nextBoardSet.add(newBoard);
                     counter ++;
                 }
             }
         }
 
-        //System.out.println(board.nextBoardSet.size());
-
         if(!board.nextBoardSet.isEmpty()){
             int temp = 0;
             for(Board cursor: board.nextBoardSet){
-                cursor.alpha = board.alpha;
-                cursor.beta = board.beta;
-                counter += buildNextSetAB(cursor);
+
+                counter += buildNextSetTest(cursor);
 
                 if(temp == 0){
-                    System.out.println("hi1");
                     board.treeStateEvaluation = cursor.treeStateEvaluation;
                     board.optiMalMove = cursor.previousMove;
-                    if(board.colorActive == 1){
-                        board.alpha = cursor.treeStateEvaluation;
-                    }else{
-                        board.beta = cursor.treeStateEvaluation;
-                    }
-                    if(board.alpha > board.beta){
-                        System.out.println("hihihihihihihihi");
-                        break;
-                    }
-
-                    //System.out.println("Heyyyyyyyyyyyy");
                 }else{
                     if(board.colorActive == 1){
-
                         if(board.treeStateEvaluation < cursor.treeStateEvaluation){
-                            System.out.println("hi2");
                             board.treeStateEvaluation = cursor.treeStateEvaluation;
                             board.optiMalMove = cursor.previousMove;
-                            board.alpha = cursor.treeStateEvaluation;
-                        }
-                        if(board.alpha > board.beta){
-                            System.out.println("hihihihihihihihi");
-                            break;
                         }
                     }else{
                         if(board.treeStateEvaluation > cursor.treeStateEvaluation){
-                            System.out.println("hi3");
                             board.treeStateEvaluation = cursor.treeStateEvaluation;
                             board.optiMalMove = cursor.previousMove;
-                            board.beta = cursor.treeStateEvaluation;
-                        }
-                        if(board.alpha > board.beta){
-                            System.out.println("hihihihihihihihi");
-                            break;
                         }
                     }
+                }
+
+                if(board.colorActive==1){
+                    if(board.alpha < cursor.treeStateEvaluation){
+                        board.alpha = cursor.treeStateEvaluation;
+                    }
+                }else{
+                    if(board.beta > cursor.treeStateEvaluation){
+                        board.beta = cursor.treeStateEvaluation;
+                    }
+                }
+
+                if(board.beta < board.alpha){
+                    break;
                 }
 
                 temp ++;
             }
 
-            //board.nextBoardSet = null;
+
         }else{
             board.treeStateEvaluation = board.boardStateEvaluation;
         }

@@ -273,7 +273,7 @@ public class Interface extends JFrame implements ActionListener {
 
         Color page2Color = new Color(224, 224, 224);
 
-        history.setBounds(55,55,350,400);
+        history.setBounds(55,55,350,450);
         history.setBackground(page2Color);
 
         Page2 = new JPanel();

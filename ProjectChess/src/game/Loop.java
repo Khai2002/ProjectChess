@@ -259,8 +259,6 @@ public class Loop {
     }
 
 
-    // Anh dung 1 method check gameEnd
-    // Co the cho no return int hoac boolean
     //Game-end condition
     public static int gameEnd(Board board){
         if (board.isWhiteInCheckMate){

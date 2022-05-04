@@ -34,10 +34,7 @@ public class Board implements Serializable, Comparable<Board> {
 
 
     // Local Attributes ====================================================== //
-    
-    // AB
-    public double alpha = -9999;
-    public double beta = 9999;
+
 
     // Variables that connect board to a previous state
     public Board previousBoard;
@@ -84,6 +81,9 @@ public class Board implements Serializable, Comparable<Board> {
     public Move optiMalMove;
     public TreeSet<Board> nextBoardSet = new TreeSet<>();
 
+    public double alpha;
+    public double beta;
+
 
     // Constructors ========================================================== //
 
@@ -91,11 +91,17 @@ public class Board implements Serializable, Comparable<Board> {
     public Board(String fen){
 
         try{
+            this.alpha = Double.NEGATIVE_INFINITY;
+            this.beta = Double.NEGATIVE_INFINITY;
+
             this.eliminateMove = true;
             this.searchDepth = 0;
             this.fen = fen;
             this.fenToBoard(this.fen);
         }catch (Exception e){
+            this.alpha = Double.NEGATIVE_INFINITY;
+            this.beta = Double.NEGATIVE_INFINITY;
+
             System.out.println("FEN code not compatible");
             this.eliminateMove = true;
             this.searchDepth = 0;
@@ -136,6 +142,9 @@ public class Board implements Serializable, Comparable<Board> {
 
     // Initialise Board using previous Board and a transition Move
     public Board(Board previousBoard, Move move, boolean eliminateMove, int searchDepth){
+        this.alpha = Double.NEGATIVE_INFINITY;
+        this.beta = Double.POSITIVE_INFINITY;
+
         this.eliminateMove = eliminateMove;
         this.searchDepth = searchDepth;
 
@@ -792,10 +801,24 @@ public class Board implements Serializable, Comparable<Board> {
         int return_value = 0;
 
         for(Piece piece:whitePieces){
+            if(piece instanceof Rook){
+                int increment = 3 - Math.min(Math.abs(piece.position[1]-3), Math.abs(piece.position[1]-4));
+                piece.value += increment*0.15;
+            }else if(piece instanceof Pawn){
+                int increment = 7 - piece.position[0];
+                piece.value += increment*0.1;
+            }
             return_value += piece.value;
         }
 
         for(Piece piece:blackPieces){
+            if(piece instanceof Rook){
+                int increment = 3 - Math.min(Math.abs(piece.position[1]-3), Math.abs(piece.position[1]-4));
+                piece.value -= increment*0.15;
+            }else if(piece instanceof Pawn){
+                int increment = piece.position[0];
+                piece.value -= increment*0.1;
+            }
             return_value -= piece.value;
         }
 
