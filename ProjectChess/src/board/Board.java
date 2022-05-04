@@ -801,24 +801,10 @@ public class Board implements Serializable, Comparable<Board> {
         int return_value = 0;
 
         for(Piece piece:whitePieces){
-            if(piece instanceof Rook){
-                int increment = 3 - Math.min(Math.abs(piece.position[1]-3), Math.abs(piece.position[1]-4));
-                piece.value += increment*0.15;
-            }else if(piece instanceof Pawn){
-                int increment = 7 - piece.position[0];
-                piece.value += increment*0.1;
-            }
             return_value += piece.value;
         }
 
         for(Piece piece:blackPieces){
-            if(piece instanceof Rook){
-                int increment = 3 - Math.min(Math.abs(piece.position[1]-3), Math.abs(piece.position[1]-4));
-                piece.value -= increment*0.15;
-            }else if(piece instanceof Pawn){
-                int increment = piece.position[0];
-                piece.value -= increment*0.1;
-            }
             return_value -= piece.value;
         }
 
